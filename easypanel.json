@@ -1,0 +1,9 @@
+{
+  "appName": "sextou-viral",
+  "domain": "sextou.fbr.news",
+  "port": 80,
+  "buildType": "dockerfile",
+  "healthcheck": "/",
+  "restart": "unless-stopped",
+  "version": "v1-html-standalone"
+}
