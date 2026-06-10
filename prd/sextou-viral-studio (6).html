@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sextou Viral Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D0D0D;
+  --surface:#171717;
+  --surface2:#1F1F1F;
+  --surface3:#2A2A2A;
+  --border:rgba(255,255,255,.08);
+  --border2:rgba(255,255,255,.15);
+  --text:#F0EDE6;
+  --text2:#A09D97;
+  --text3:#5A5755;
+  --red:#FF3D57;
+  --redbg:rgba(255,61,87,.12);
+  --yellow:#FFD600;
+  --ybg:rgba(255,214,0,.10);
+  --green:#1FBA7A;
+  --gbg:rgba(31,186,122,.12);
+  --blue:#4A9EFF;
+  --bbg:rgba(74,158,255,.12);
+  --orange:#FF8C00;
+  --obg:rgba(255,140,0,.12);
+  --purple:#9B6DFF;
+  --pbg:rgba(155,109,255,.12);
+  --r:8px;--r-lg:12px;--r-xl:16px;
+  --font:'Inter',system-ui,sans-serif;
+  --display:'Syne',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --sh:0 1px 3px rgba(0,0,0,.4);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+
+/* ── HEADER ── */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,13,13,.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:0 1.5rem;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{font-family:var(--display);font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--text)}
+.logo span{color:var(--red)}
+.phase-bar{display:flex;align-items:center;gap:6px}
+.ph{display:flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--text3);transition:all .2s;cursor:default}
+.ph .ph-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:all .2s}
+.ph.done{color:var(--green)}.ph.done .ph-dot{background:var(--green)}
+.ph.on{color:var(--red);background:var(--redbg)}.ph.on .ph-dot{background:var(--red)}
+.ph-sep{width:24px;height:1px;background:var(--border)}
+
+/* ── MAIN ── */
+.main{max-width:640px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+
+/* ── HERO (só fase 1) ── */
+.hero{text-align:center;margin-bottom:2.5rem}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+.hero-title{font-family:var(--display);font-size:clamp(28px,6vw,42px);font-weight:800;letter-spacing:-.03em;line-height:1.05;color:var(--text);margin-bottom:12px}
+.hero-title em{font-style:normal;color:var(--yellow)}
+.hero-sub{font-size:14px;color:var(--text2);max-width:420px;margin:0 auto}
+
+/* ── PANELS ── */
+.panel{display:none}.panel.on{display:block}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:1.5rem;margin-bottom:1rem}
+.card-title{font-family:var(--display);font-size:16px;font-weight:700;color:var(--text);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px}
+.card-title .ct-badge{font-family:var(--font);font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:10px}
+.ct-badge.red{background:var(--redbg);color:var(--red)}
+.ct-badge.yellow{background:var(--ybg);color:var(--yellow)}
+.ct-badge.green{background:var(--gbg);color:var(--green)}
+.ct-badge.blue{background:var(--bbg);color:var(--blue)}
+.ct-badge.orange{background:var(--obg);color:var(--orange)}
+.ct-badge.purple{background:var(--pbg);color:var(--purple)}
+
+/* ── FORM FIELDS ── */
+.field{margin-bottom:1rem}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+.field input[type=text],.field input[type=password],.field textarea,.field select{
+  font-family:var(--font);font-size:14px;width:100%;
+  background:var(--surface2);color:var(--text);
+  border:1px solid var(--border2);border-radius:var(--r-lg);
+  padding:11px 14px;outline:none;transition:border-color .15s,box-shadow .15s;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+  border-color:var(--red);box-shadow:0 0 0 3px var(--redbg);
+}
+.field textarea{resize:vertical;line-height:1.6;min-height:90px}
+.field select{height:44px;cursor:pointer}
+.field .hint{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5}
+
+/* ── TOGGLE (sim/não) ── */
+.toggle-row{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.toggle-row label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3)}
+.toggle-group{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px}
+.tg-btn{font-size:12px;font-weight:500;padding:4px 14px;border-radius:16px;border:none;background:transparent;color:var(--text2);cursor:pointer;transition:all .15s}
+.tg-btn.on{background:var(--red);color:#fff}
+
+/* ── CHAR ROW (briefing) ── */
+.char-brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+
+/* ── DIVIDER ── */
+hr{border:none;border-top:1px solid var(--border);margin:1.25rem 0}
+
+/* ── BUTTONS ── */
+button{font-family:var(--font);cursor:pointer;border:1px solid var(--border2);border-radius:var(--r-lg);background:var(--surface2);color:var(--text2);font-size:13px;padding:0 16px;height:38px;display:inline-flex;align-items:center;gap:7px;transition:all .15s}
+button:hover{border-color:var(--border2);background:var(--surface3);color:var(--text)}
+button:active{transform:scale(.98)}
+button:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-cta{background:var(--red);color:#fff;border-color:transparent;font-weight:600;font-size:14px;height:48px;border-radius:var(--r-xl);justify-content:center;padding:0 28px;letter-spacing:.01em}
+.btn-cta:hover{background:#e62e45;color:#fff}
+.btn-cta.yellow{background:var(--yellow);color:#0D0D0D}
+.btn-cta.yellow:hover{background:#e6c000}
+.btn-cta.green{background:var(--green);color:#0D0D0D}
+.btn-cta.green:hover{background:#18a56b}
+.btn-cta:disabled{background:var(--surface3);color:var(--text3);border-color:transparent}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--text2)}
+.btn-ghost:hover{background:var(--surface2);border-color:var(--border);color:var(--text)}
+.btn-sm{height:30px;font-size:12px;padding:0 12px}
+.btn-icon{width:38px;padding:0;justify-content:center}
+.act-row{display:flex;gap:8px;margin-top:1.5rem}
+.act-row .btn-cta{flex:1}
+
+/* ── TIMER BADGE ── */
+.timer-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;font-family:var(--mono)}
+.timer-badge.ok{background:var(--gbg);color:var(--green);border:1px solid rgba(31,186,122,.3)}
+.timer-badge.warn{background:var(--ybg);color:var(--yellow);border:1px solid rgba(255,214,0,.3)}
+.timer-badge.over{background:var(--redbg);color:var(--red);border:1px solid rgba(255,61,87,.3)}
+
+/* ── SCRIPT VIEWER ── */
+.script-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;margin-bottom:1rem}
+.script-toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface3)}
+.script-lines{padding:10px 0;max-height:360px;overflow-y:auto}
+.script-lines::-webkit-scrollbar{width:4px}
+.script-lines::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px}
+
+/* ── SCRIPT LINE ROW ── */
+.sl{display:flex;align-items:flex-start;gap:10px;padding:7px 14px;transition:background .1s;cursor:default}
+.sl:hover{background:rgba(255,255,255,.03)}
+.sl-type-btn{
+  font-size:10px;font-weight:600;padding:3px 8px;border-radius:8px;
+  border:1px solid transparent;cursor:pointer;white-space:nowrap;
+  min-width:72px;justify-content:center;height:22px;flex-shrink:0;
+  font-family:var(--font);display:inline-flex;align-items:center;gap:3px;
+  transition:all .15s;margin-top:1px;
+}
+.sl-type-btn.speech{background:var(--gbg);color:var(--green);border-color:rgba(31,186,122,.3)}
+.sl-type-btn.speech:hover{background:var(--green);color:#0D0D0D}
+.sl-type-btn.scene{background:var(--obg);color:var(--orange);border-color:rgba(255,140,0,.3)}
+.sl-type-btn.scene:hover{background:var(--orange);color:#0D0D0D}
+.sl-type-btn.ignore{background:var(--surface3);color:var(--text3);border-color:var(--border)}
+.sl-type-btn.ignore:hover{background:var(--surface2);color:var(--text2)}
+.sl-content{flex:1;min-width:0}
+.sl-speaker{font-size:11px;font-weight:600;color:var(--text3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.sl-text{font-size:13px;color:var(--text);line-height:1.5}
+.sl.ignored .sl-text{color:var(--text3);text-decoration:line-through}
+
+/* ── VOICE SECTION ── */
+.char-voice-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.cv-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-xl);padding:12px 14px}
+.cv-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.cv-name{font-size:13px;font-weight:600;min-width:80px;color:var(--text)}
+.cv-select{flex:1;font-family:var(--font);font-size:12px;background:var(--surface3);color:var(--text);border:1px solid var(--border2);border-radius:var(--r-lg);height:34px;padding:0 10px;outline:none}
+.cv-select:focus{border-color:var(--red)}
+.cv-demo{width:34px;height:34px;padding:0;justify-content:center;font-size:14px;flex-shrink:0;border-radius:var(--r-lg)}
+.cv-demo.playing{background:var(--gbg);border-color:rgba(31,186,122,.4);color:var(--green);animation:pulse 1s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ── GENDER FILTER ── */
+.gf-row{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.gf-btn{font-size:11px;height:26px;padding:0 10px;border-radius:14px;font-weight:500}
+.gf-btn.on{background:var(--red);color:#fff;border-color:transparent}
+
+/* ── VOICE GRID (galeria) ── */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;max-height:280px;overflow-y:auto;margin-bottom:1rem;padding-right:2px}
+.vgrid::-webkit-scrollbar{width:4px}
+.vgrid::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px}
+.vc{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-xl);padding:10px 11px;cursor:pointer;transition:border-color .15s;position:relative;user-select:none}
+.vc:hover{border-color:var(--border2)}
+.vc.on{border:1.5px solid var(--red);background:var(--redbg)}
+.vc.on .vc-name{color:var(--red)}
+.vc.hidden{display:none}
+.vc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.vc-name{font-size:12px;font-weight:600;color:var(--text)}
+.vc-g{font-size:12px;color:var(--text3)}
+.vc-desc{font-size:10px;color:var(--text3);line-height:1.4;margin-bottom:6px;min-height:26px}
+.vc-play{width:100%;height:24px;font-size:10px;border-radius:7px;background:var(--surface3);border-color:var(--border);color:var(--text2);justify-content:center}
+.vc-play:hover{background:var(--redbg);border-color:rgba(255,61,87,.3);color:var(--red)}
+.vc-play.playing{background:var(--gbg);color:var(--green);animation:pulse 1s ease infinite}
+.vc-check{position:absolute;top:7px;right:7px;width:14px;height:14px;border-radius:50%;background:var(--red);display:none;align-items:center;justify-content:center;font-size:8px;color:#fff}
+.vc.on .vc-check{display:flex}
+
+/* ── AUDIO JOBS ── */
+.audio-job{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-xl);margin-bottom:6px}
+.aj-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--text3)}
+.aj-dot.ok{background:var(--green)}
+.aj-dot.err{background:var(--red)}
+.aj-dot.run{background:var(--yellow);animation:pulse .8s ease infinite}
+.aj-name{font-size:13px;font-weight:600;flex:1;min-width:0}
+.aj-status{font-size:11px;color:var(--text2)}
+.aj-play{width:28px;height:28px;padding:0;justify-content:center;font-size:12px;flex-shrink:0}
+
+/* ── VIDEO JOBS ── */
+.video-job{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;margin-bottom:12px}
+.vj-head{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.vj-title{font-size:13px;font-weight:600}
+.vj-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:10px;letter-spacing:.03em}
+.vj-badge.q{background:var(--ybg);color:var(--yellow)}
+.vj-badge.run{background:var(--bbg);color:var(--blue)}
+.vj-badge.ok{background:var(--gbg);color:var(--green)}
+.vj-badge.err{background:var(--redbg);color:var(--red)}
+.vj-prog{padding:12px 16px}
+.prog-track{height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:8px}
+.prog-fill{height:100%;background:var(--red);border-radius:2px;transition:width .5s ease}
+.prog-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text2)}
+.vj-result{padding:12px 16px}
+.vj-result video{width:100%;border-radius:var(--r-lg);background:#000;display:block;margin-bottom:10px;max-height:280px}
+.vj-acts{display:flex;gap:8px}
+.vj-acts button{flex:1;justify-content:center}
+.vj-err{padding:12px 16px}
+.vj-errmsg{font-size:12px;color:var(--red);background:var(--redbg);border-radius:var(--r-lg);padding:10px 13px;line-height:1.5}
+
+/* ── STATUS BOX (áudio) ── */
+.sbox{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;margin-bottom:1rem}
+.sbox-head{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.sbox-title{font-size:13px;font-weight:600}
+.sbox-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:10px;letter-spacing:.03em}
+.sbox-badge.run{background:var(--bbg);color:var(--blue)}
+.sbox-badge.ok{background:var(--gbg);color:var(--green)}
+.sbox-badge.err{background:var(--redbg);color:var(--red)}
+.sbox-body{padding:14px 16px}
+.sbox-body audio{width:100%;margin-bottom:10px}
+
+/* ── TIP ── */
+.tip{font-size:12px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);padding:10px 14px;margin-bottom:1rem;line-height:1.6}
+.tip b{color:var(--text);font-weight:500}
+.tip.red{background:var(--redbg);border-color:rgba(255,61,87,.3);color:rgba(255,61,87,.9)}
+.tip.green{background:var(--gbg);border-color:rgba(31,186,122,.3);color:var(--green)}
+.tip.yellow{background:var(--ybg);border-color:rgba(255,214,0,.3);color:var(--yellow)}
+
+/* ── SPINNER ── */
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;animation:sp .7s linear infinite;display:inline-block;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+.spin.r{border-color:var(--redbg);border-top-color:var(--red)}
+.spin.g{border-color:rgba(255,255,255,.1);border-top-color:var(--text2)}
+
+/* ── VIDEO MODEL GRID ── */
+.vm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px;margin-bottom:1.25rem}
+.vm-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-xl);padding:12px 14px;cursor:pointer;transition:border-color .15s}
+.vm-card:hover{border-color:var(--border2)}
+.vm-card.on{border:1.5px solid var(--red);background:var(--redbg)}
+.vm-card.on .vmc-name{color:var(--red)}
+.vmc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px}
+.vmc-name{font-size:13px;font-weight:600;color:var(--text)}
+.vmc-prov{font-size:11px;color:var(--text3);margin-bottom:5px}
+.vmc-tags{display:flex;gap:4px;flex-wrap:wrap}
+.vtag{font-size:10px;font-weight:500;padding:2px 7px;border-radius:8px;background:var(--surface3);color:var(--text2);border:1px solid var(--border)}
+.vtag.g{background:var(--gbg);color:var(--green);border-color:rgba(31,186,122,.3)}
+.vtag.b{background:var(--bbg);color:var(--blue);border-color:rgba(74,158,255,.3)}
+.cpill{font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;white-space:nowrap}
+.cpill.cheap{background:var(--gbg);color:var(--green)}
+.cpill.mid{background:var(--ybg);color:var(--yellow)}
+.cpill.pricey{background:var(--redbg);color:var(--red)}
+
+/* ── PARAMS GRID ── */
+.params-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:1rem}
+.pg label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:5px}
+.pg select{font-family:var(--font);font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:var(--r-lg);height:34px;padding:0 10px;outline:none;width:100%}
+
+/* ── PIPELINE STEPS ── */
+.pipe-step{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg)}
+.pipe-step.active{border-color:var(--red);background:var(--redbg)}
+.pipe-step.done{border-color:rgba(31,186,122,.4);background:var(--gbg)}
+.pipe-step.error{border-color:rgba(255,61,87,.4);background:var(--redbg)}
+.ps-icon{font-size:16px;flex-shrink:0;width:20px;text-align:center}
+.ps-body{flex:1;min-width:0}
+.ps-name{font-size:13px;font-weight:600;color:var(--text)}
+.ps-status{font-size:11px;color:var(--text2);margin-top:1px}
+.ps-time{font-size:11px;color:var(--text3);flex-shrink:0;font-family:var(--mono)}
+.steps-preview-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:5px;font-size:12px;color:var(--text2)}
+.steps-preview-item .spi-num{width:20px;height:20px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text3);flex-shrink:0}
+.steps-preview-item.highlight .spi-num{background:var(--redbg);color:var(--red)}
+
+/* ── DUR ROW ── */
+.dur-row{margin-bottom:1.25rem}
+.dur-hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.dur-hd label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3)}
+.dur-val{font-size:20px;font-weight:600;color:var(--text);font-family:var(--display)}
+.dur-val span{font-size:12px;font-weight:400;color:var(--text3)}
+input[type=range]{width:100%;height:3px;accent-color:var(--red);border:none;background:transparent;outline:none;cursor:pointer}
+.dur-ticks{display:flex;justify-content:space-between;margin-top:4px}
+.dur-ticks span{font-size:10px;color:var(--text3)}
+.dur-note{font-size:11px;color:var(--text3);margin-top:4px;min-height:14px}
+.dur-note.auto{color:var(--green)}
+
+/* ── LINK ── */
+a.ext{color:var(--blue);text-decoration:none;font-size:12px}
+a.ext:hover{text-decoration:underline}
+
+/* ── CLIP CARDS ── */
+.clip-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;margin-bottom:10px}
+.clip-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.clip-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px}
+.clip-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px}
+.clip-badge.q{background:var(--ybg);color:var(--yellow)}
+.clip-badge.run{background:var(--bbg);color:var(--blue)}
+.clip-badge.ok{background:var(--gbg);color:var(--green)}
+.clip-badge.err{background:var(--redbg);color:var(--red)}
+.clip-prog{padding:10px 14px}
+.clip-result{padding:10px 14px}
+.clip-result video{width:100%;border-radius:var(--r-lg);background:#000;display:block;margin-bottom:8px;max-height:240px}
+.clip-acts{display:flex;gap:6px}
+.clip-acts button{flex:1;justify-content:center;height:32px;font-size:12px}
+.clip-err{padding:10px 14px}
+.clip-errmsg{font-size:12px;color:var(--red);background:var(--redbg);border-radius:var(--r-lg);padding:9px 12px}
+
+/* ── AUDIO REVIEW ── */
+.audio-review-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-xl);padding:13px 16px;margin-bottom:8px}
+.arc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.arc-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.arc-name{font-size:13px;font-weight:600;flex:1}
+.arc-voice{font-size:11px;color:var(--text3)}
+.arc-audio{width:100%;margin-bottom:0}
+
+/* ── REUNIFY BTN ── */
+.reunify-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:14px 16px;margin-bottom:1rem;display:flex;align-items:center;gap:12px}
+.reunify-bar .rb-text{flex:1;font-size:13px;color:var(--text2)}
+.reunify-bar .rb-count{font-size:11px;color:var(--text3)}
+
+/* ── SALDO WIDGET ── */
+.balance-bar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-xl);padding:11px 16px;
+  margin-bottom:1.5rem;box-shadow:var(--sh);
+  flex-wrap:wrap;
+}
+.bal-item{display:flex;align-items:center;gap:7px;flex:1;min-width:140px}
+.bal-icon{font-size:18px;flex-shrink:0}
+.bal-body .bal-label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
+.bal-body .bal-value{font-size:16px;font-weight:700;font-family:var(--display);color:var(--text);line-height:1.1;margin-top:1px}
+.bal-body .bal-value.ok{color:var(--green)}
+.bal-body .bal-value.warn{color:var(--yellow)}
+.bal-body .bal-value.danger{color:var(--red)}
+.bal-sep{width:1px;height:36px;background:var(--border2);flex-shrink:0}
+.bal-status{font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;white-space:nowrap}
+.bal-status.ok{background:var(--gbg);color:var(--green)}
+.bal-status.warn{background:var(--ybg);color:var(--yellow)}
+.bal-status.danger{background:var(--redbg);color:var(--red)}
+.bal-status.loading{background:var(--surface2);color:var(--text3)}
+.bal-cost-row{width:100%;font-size:11px;color:var(--text2);padding-top:6px;border-top:1px solid var(--border);margin-top:2px;display:none}
+.bal-cost-row.show{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
+
+/* ── BLOQUEIO 30s ── */
+.over30-block{
+  background:var(--redbg);border:1px solid rgba(255,61,87,.4);
+  border-radius:var(--r-lg);padding:12px 16px;margin-top:1rem;
+  display:none;
+}
+.over30-block.show{display:block}
+.over30-block .o30-title{font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px}
+.over30-block .o30-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.over30-block .o30-bar{margin-top:8px}
+.o30-track{height:6px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
+.o30-fill{height:100%;border-radius:3px;background:var(--red);transition:width .3s}
+
+@media(max-width:480px){
+  .phase-bar{display:none}
+  .char-brief-grid{grid-template-columns:1fr}
+  .params-grid{grid-template-columns:1fr 1fr}
+  .vm-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">Sextou<span>Viral</span> Studio</div>
+  <div class="phase-bar">
+    <div class="ph on" id="ph1"><div class="ph-dot"></div>Pré-Produção</div>
+    <div class="ph-sep"></div>
+    <div class="ph" id="ph2"><div class="ph-dot"></div>Roteiro</div>
+    <div class="ph-sep"></div>
+    <div class="ph" id="ph3"><div class="ph-dot"></div>Vozes</div>
+    <div class="ph-sep"></div>
+    <div class="ph" id="ph4"><div class="ph-dot"></div>Vídeo</div>
+  </div>
+</header>
+
+<main class="main">
+
+<!-- WIDGET SALDO — visível em todas as fases -->
+<div class="balance-bar" id="balanceBar" style="display:none">
+  <div class="bal-item">
+    <div class="bal-icon">💳</div>
+    <div class="bal-body">
+      <div class="bal-label">Saldo OpenRouter</div>
+      <div class="bal-value" id="balValue">—</div>
+    </div>
+  </div>
+  <div class="bal-sep"></div>
+  <div class="bal-item">
+    <div class="bal-icon">🎬</div>
+    <div class="bal-body">
+      <div class="bal-label">Custo estimado</div>
+      <div class="bal-value" id="estCostValue">—</div>
+    </div>
+  </div>
+  <div class="bal-sep"></div>
+  <div class="bal-item" style="flex:0">
+    <span class="bal-status loading" id="balStatus">verificando…</span>
+  </div>
+  <div class="bal-cost-row" id="balCostRow">
+    <span id="balCostDetail">—</span>
+    <a href="https://openrouter.ai/settings/billing" target="_blank" class="ext">↗ Adicionar créditos</a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     FASE 1 — PRÉ-PRODUÇÃO
+═══════════════════════════════════ -->
+<div class="panel on" id="p1">
+  <div class="hero">
+    <div class="hero-eyebrow">Crie em minutos</div>
+    <div class="hero-title">Vídeos virais com<br><em>IA de ponta</em></div>
+    <div class="hero-sub">Descreva seu produto, sua ideia e deixe o studio fazer o resto — roteiro, vozes e vídeo prontos.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Sobre o produto <span class="ct-badge red">obrigatório</span></div>
+    <div class="field">
+      <label>Nome do produto ou serviço</label>
+      <input type="text" id="f-product" placeholder="Ex: Tênis AirMax Pro, App de finanças pessoais…"/>
+    </div>
+    <div class="field">
+      <label>Objetivo do vídeo</label>
+      <select id="f-goal">
+        <option value="">Selecione…</option>
+        <option value="awareness">🔥 Awareness — apresentar o produto</option>
+        <option value="conversao">💰 Conversão — vender / gerar leads</option>
+        <option value="engajamento">❤️ Engajamento — curtidas e compartilhamentos</option>
+        <option value="educacao">📚 Educação — ensinar como usar</option>
+        <option value="depoimento">⭐ Depoimento — prova social</option>
+        <option value="lancamento">🚀 Lançamento — revelar novidade</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Personagens <span class="ct-badge yellow">casting</span></div>
+    <div class="toggle-row">
+      <label>Narrador(a)</label>
+      <div class="toggle-group">
+        <button class="tg-btn on" id="tg-narr-yes" onclick="toggleNarr(true)">Sim</button>
+        <button class="tg-btn"    id="tg-narr-no"  onclick="toggleNarr(false)">Não</button>
+      </div>
+    </div>
+    <div class="char-brief-grid">
+      <div class="field">
+        <label>Personagem 1 <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <input type="text" id="f-char1" placeholder="Ex: João — cliente satisfeito"/>
+      </div>
+      <div class="field">
+        <label>Personagem 2 <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <input type="text" id="f-char2" placeholder="Ex: Maria — vendedora"/>
+      </div>
+      <div class="field">
+        <label>Personagem 3 <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <input type="text" id="f-char3" placeholder="Ex: Pedro — especialista"/>
+      </div>
+      <div class="field">
+        <label>Personagem 4 <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <input type="text" id="f-char4" placeholder="Ex: Ana — apresentadora"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ideia do vídeo <span class="ct-badge orange">criativo</span></div>
+    <div class="field">
+      <label>Resumo da sua ideia</label>
+      <textarea id="f-idea" rows="4" placeholder="Descreva em poucas linhas o que você imagina para o vídeo. Ex: João usa o produto pela primeira vez e se surpreende com os resultados, a narradora explica os benefícios enquanto cenas mostram o produto em ação."></textarea>
+      <div class="hint">Não precisa ser perfeito — a IA vai desenvolver a partir da sua ideia.</div>
+    </div>
+  </div>
+
+  <div class="act-row">
+    <button class="btn-cta" onclick="goPhase2()">
+      Gerar roteiro e seguir →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     FASE 2 — ROTEIRO + API
+═══════════════════════════════════ -->
+<div class="panel" id="p2">
+
+  <!-- API key -->
+  <div class="card" id="apiCard">
+    <div class="card-title">Chave de API <span class="ct-badge blue">OpenRouter</span></div>
+    <div class="field">
+      <label>Sua chave</label>
+      <input type="password" id="apiKey" placeholder="sk-or-v1-…" autocomplete="off"/>
+      <div class="hint">A chave é salva localmente no seu navegador. <a class="ext" href="https://openrouter.ai/settings/keys" target="_blank">↗ Não tem conta no OpenRouter? Clique aqui para criar</a></div>
+    </div>
+    <button class="btn-cta" style="margin-top:1rem;width:100%" onclick="confirmApiAndGenerate()">
+      <span class="spin" id="apiSpin" style="display:none"></span>
+      <span id="apiBtn">Confirmar e gerar roteiro</span>
+    </button>
+  </div>
+
+  <!-- Roteiro gerado -->
+  <div id="scriptSection" style="display:none">
+
+    <div class="card">
+      <div class="card-title" style="justify-content:space-between">
+        <span>Roteiro gerado <span class="ct-badge yellow">IA</span></span>
+        <div id="timerBadge" class="timer-badge ok">— s</div>
+      </div>
+
+      <div class="tip" id="scriptTip">Revise o roteiro. Cada linha indica se vai virar <b>🎙 áudio</b> ou <b>🎬 cena de vídeo</b>. Clique no tipo para trocar.</div>
+      <div class="tip red" id="noScenesTip" style="display:none">
+        ⚠️ <b>Nenhuma cena visual detectada.</b> O roteiro precisa ter pelo menos uma linha do tipo <b>🎬 cena</b> para gerar o vídeo. Clique em <b>↺ Regenerar</b> ou troque o tipo de alguma linha para 🎬 cena.
+      </div>
+
+      <div class="script-box">
+        <div class="script-toolbar">
+          <span style="font-size:11px;color:var(--text3)" id="scriptStats">—</span>
+          <button class="btn-ghost btn-sm" onclick="openEditModal()">✏️ Editar texto</button>
+        </div>
+        <div class="script-lines" id="scriptLines"></div>
+      </div>
+
+      <div class="tip yellow" id="overTip" style="display:none">⚠️ O áudio estimado ultrapassa 30 segundos. Edite o roteiro ou remova algumas falas.</div>
+
+      <!-- bloqueio 30s -->
+      <div class="over30-block" id="over30Block">
+        <div class="o30-title">⏱ Roteiro ultrapassa 30 segundos</div>
+        <div class="o30-desc">Remova algumas falas ou reduza os diálogos para continuar.<br>
+          Atual: <strong id="over30Dur">0s</strong> — Limite: <strong>30s</strong> — Remover: <strong id="over30Remove">0 palavras</strong>
+        </div>
+        <div class="o30-bar">
+          <div class="o30-track"><div class="o30-fill" id="over30Fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="act-row">
+        <button class="btn-ghost" onclick="regenScript()"><span class="spin r" id="regenSpin" style="display:none"></span> ↺ Regenerar</button>
+        <button class="btn-cta green" id="approveBtn" onclick="approveScript()">Aprovar roteiro →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL edição de roteiro -->
+<div id="editModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-xl);width:100%;max-width:600px;padding:1.5rem">
+    <div style="font-family:var(--display);font-size:16px;font-weight:700;margin-bottom:1rem">Editar roteiro</div>
+    <textarea id="editScriptTa" rows="14" style="font-family:var(--mono);font-size:12px;width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:var(--r-lg);padding:12px;outline:none;resize:vertical;line-height:1.6"></textarea>
+    <div style="font-size:11px;color:var(--text3);margin-top:6px;margin-bottom:1rem">Use <b style="color:var(--text)">PERSONAGEM: fala</b> para diálogos e <b style="color:var(--text)">(descrição de cena)</b> para cenas visuais.</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-ghost" style="flex:1;justify-content:center" onclick="closeEditModal()">Cancelar</button>
+      <button class="btn-cta" style="flex:2;justify-content:center" onclick="applyEdit()">Aplicar e recalcular</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     FASE 3 — VOZES
+═══════════════════════════════════ -->
+<div class="panel" id="p3">
+  <div class="card">
+    <div class="card-title">Idioma e modelo TTS <span class="ct-badge purple">voz</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem">
+      <div class="field" style="margin-bottom:0">
+        <label>Idioma</label>
+        <select id="lang" onchange="onLangChange()">
+          <option value="pt-BR">🇧🇷 Português (BR)</option>
+          <option value="pt-PT">🇵🇹 Português (PT)</option>
+          <option value="en-US">🇺🇸 English (US)</option>
+          <option value="en-GB">🇬🇧 English (UK)</option>
+          <option value="es-ES">🇪🇸 Español</option>
+          <option value="fr-FR">🇫🇷 Français</option>
+          <option value="de-DE">🇩🇪 Deutsch</option>
+          <option value="it-IT">🇮🇹 Italiano</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Modelo TTS</label>
+        <select id="ttsModelSel" onchange="onTtsModelChange()">
+          <option value="gemini">Gemini 3.1 Flash — Google ($1/M)</option>
+          <option value="grok">Grok Voice TTS 1.0 — xAI ($15/M)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="voiceAssignCard">
+    <div class="card-title">Atribuição de vozes <span class="ct-badge purple">casting</span></div>
+    <div class="tip">Clique <b>▶ ouvir</b> em qualquer voz para testá-la antes de atribuir. Use o filtro de gênero para encontrar mais rápido.</div>
+
+    <!-- galeria de vozes -->
+    <div class="gf-row">
+      <span style="font-size:11px;color:var(--text3)">Filtrar:</span>
+      <button class="gf-btn on" id="gf-all"   onclick="setGF('all')">Todos</button>
+      <button class="gf-btn"    id="gf-F"     onclick="setGF('F')">♀ Feminino</button>
+      <button class="gf-btn"    id="gf-M"     onclick="setGF('M')">♂ Masculino</button>
+      <button class="gf-btn"    id="gf-child" onclick="setGF('child')">👶 Criança</button>
+    </div>
+    <div class="tip" id="childVoiceTip" style="display:none">
+      👶 <b>Voz infantil:</b> use o campo estilo com <b>"Speak as an excited child of 8 years"</b> ou adicione <b>[childlike]</b> no início das falas no roteiro.
+    </div>
+    <div class="vgrid" id="voiceGallery"></div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0"/>
+
+    <!-- personagens + seleção de voz -->
+    <div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Personagens no roteiro</div>
+    <div class="char-voice-list" id="charVoiceList"></div>
+
+    <div class="act-row">
+      <button class="btn-ghost" onclick="goPhase2Back()">← Voltar ao roteiro</button>
+      <button class="btn-cta" onclick="approveVoices()">Vozes aprovadas — Gerar áudios →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     FASE 4 — ÁUDIOS + VÍDEO
+═══════════════════════════════════ -->
+<div class="panel" id="p4">
+
+  <!-- áudios em hold -->
+  <div class="card" id="audioHoldCard">
+    <div class="card-title">🎙 Narrações <span class="ct-badge green" id="audioHoldBadge">gerando…</span></div>
+    <div class="tip" style="margin-bottom:1rem">
+      Abaixo estão as narrações de cada personagem. Elas serão adicionadas como <b>voice-over</b> sobre o vídeo — como se os personagens estivessem pensando em voz alta.
+      Ouça cada uma antes de continuar. Para refazer, clique em <b>Reeditar narração</b>.
+    </div>
+    <div id="audioJobsList"></div>
+    <div id="audioReadyTip" style="display:none">
+      <div class="tip green" style="margin-bottom:.75rem">✅ Todas as narrações prontas e aprovadas.</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:.75rem">
+      <button class="btn-ghost" style="font-size:12px" onclick="goPhase3ForEdit()">← Reeditar narração</button>
+    </div>
+  </div>
+
+  <!-- configuração de vídeo -->
+  <div class="card" id="videoConfigCard" style="display:none">
+    <div class="card-title">🎬 Vídeo <span class="ct-badge orange">configurar</span></div>
+
+    <div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Modelo</div>
+    <div class="vm-grid" id="vmGrid"><div style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px"><span class="spin g"></span> Carregando…</div></div>
+
+    <!-- painel de etapas — preenchido dinamicamente -->
+    <div id="stepsPreview" style="display:none;margin-bottom:1rem">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Como será processado</div>
+      <div id="stepsPreviewList"></div>
+    </div>
+
+    <!-- prompts editáveis das cenas -->
+    <div id="scenesSection" style="display:none">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin:1rem 0 6px">Cenas do vídeo <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--text3)">— edite se quiser refinar</span></div>
+      <div class="tip orange">As descrições entre (parênteses) do roteiro viram os prompts de cada cena. Edite para detalhar ainda mais.</div>
+      <div id="scenePromptList" style="margin-bottom:1rem"></div>
+    </div>
+
+    <div class="params-grid">
+      <div class="pg"><label>Proporção</label><select id="aspect" onchange="onParamChange()"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option></select></div>
+      <div class="pg"><label>Resolução</label><select id="resol" onchange="onParamChange()"><option value="480p">480p</option><option value="720p" selected>720p</option><option value="1080p">1080p</option></select></div>
+      <div class="pg">
+  <label>Trilha sonora da cena
+    <span title="Sons ambiente gerados pelo modelo de IA dentro do vídeo (vento, música, passos etc). A narração dos personagens é adicionada depois como voice-over, independentemente desta opção." style="cursor:help;color:var(--text3);margin-left:3px">ⓘ</span>
+  </label>
+  <select id="vaudio" onchange="onParamChange()">
+    <option value="false" selected>Não — só imagem</option>
+    <option value="true">Sim — sons ambiente</option>
+  </select>
+</div>
+    </div>
+    <div class="dur-row">
+      <div class="dur-hd"><label>Duração máx. por cena</label><div class="dur-val"><span id="durBig">8</span><span>s</span></div></div>
+      <input type="range" id="durSlider" min="3" max="15" step="1" value="8" oninput="onDurSlider(this.value)"/>
+      <div class="dur-ticks"><span>3s</span><span>5s</span><span>8s</span><span>10s</span><span>12s</span><span>15s</span></div>
+      <div class="dur-note auto" id="durNote">O modelo escolhido define o máximo por cena</div>
+    </div>
+
+    <div class="act-row">
+      <button class="btn-cta" id="genVideoBtn" onclick="startVideoProduction()">🎬 Gerar vídeo</button>
+    </div>
+  </div>
+
+  <!-- pipeline de produção (aparece durante geração) -->
+  <div id="productionPipeline" style="display:none">
+    <div class="card">
+      <div class="card-title">🎬 Produzindo seu vídeo <span class="ct-badge blue" id="pipelineBadge">em andamento</span></div>
+
+      <!-- barra de progresso geral -->
+      <div style="margin-bottom:1.25rem">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px">
+          <span id="pipelineMsg">Iniciando…</span>
+          <span id="pipelineElapsed">0s</span>
+        </div>
+        <div class="prog-track" style="height:6px">
+          <div class="prog-fill" id="pipelineFill" style="width:0%;background:var(--red)"></div>
+        </div>
+      </div>
+
+      <!-- etapas individuais -->
+      <div id="pipelineSteps" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+  </div>
+
+  <!-- clips individuais (gerados em paralelo) -->
+  <div id="clipsArea" style="display:none">
+    <div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Cenas geradas</div>
+    <div id="clipCards"></div>
+
+    <!-- barra de reunificação -->
+    <div class="reunify-bar" id="reunifyBar" style="display:none">
+      <div>
+        <div class="rb-text">Todas as cenas prontas — pronto para unificar em 1 vídeo.</div>
+        <div class="rb-count" id="reunifyCount"></div>
+      </div>
+      <button class="btn-cta" id="reunifyBtn" onclick="doMerge()" style="flex:0;white-space:nowrap">🔗 Unificar agora</button>
+    </div>
+    <div class="reunify-bar" id="partialReunifyBar" style="display:none">
+      <div>
+        <div class="rb-text">Algumas cenas prontas — você pode unificar as que estão ok.</div>
+        <div class="rb-count" id="partialReunifyCount"></div>
+      </div>
+      <button class="btn-ghost" id="partialReunifyBtn" onclick="doMerge()" style="flex:0;white-space:nowrap">🔗 Unificar cenas prontas</button>
+    </div>
+  </div>
+
+  <!-- resultado final -->
+  <div id="finalResult" style="display:none">
+    <div class="card">
+      <div class="card-title">✅ Vídeo pronto! <span class="ct-badge green">concluído</span></div>
+      <video id="finalVideo" controls playsinline style="width:100%;border-radius:var(--r-lg);background:#000;display:block;margin-bottom:1rem;max-height:320px"></video>
+      <div style="display:flex;gap:8px">
+        <button class="btn-cta" id="finalDlBtn" style="flex:2">⬇ Baixar vídeo final</button>
+        <button class="btn-ghost" style="flex:1;justify-content:center" onclick="restartAll()">+ Novo vídeo</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:1rem" id="backBtn4">
+    <button class="btn-ghost" onclick="goPhase3ForEdit()">← Reeditar narração</button>
+    <button class="btn-ghost" style="margin-left:8px" onclick="restartAll()">← Novo vídeo</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+/* ═══════════════════════════
+   DATA
+═══════════════════════════ */
+const TTS = {
+  gemini:{ id:'google/gemini-3.1-flash-tts-preview', fmt:'pcm', cpm:1.00, sr:24000 },
+  grok:  { id:'x-ai/grok-voice-tts-1.0',             fmt:'mp3', cpm:15.00, sr:null },
+};
+
+const GEMINI_VOICES=[
+  {id:'Achernar',g:'F',d:'Suave, delicada'},
+  {id:'Achird',g:'M',d:'Amigável, acessível'},
+  {id:'Algenib',g:'M',d:'Gravoso, intenso'},
+  {id:'Algieba',g:'M',d:'Suave, fluido'},
+  {id:'Alnilam',g:'M',d:'Firme, assertivo'},
+  {id:'Aoede',g:'F',d:'Leveza, breezy'},
+  {id:'Autonoe',g:'F',d:'Brilhante, clara'},
+  {id:'Callirrhoe',g:'F',d:'Descontraída'},
+  {id:'Charon',g:'M',d:'Informativo, sólido'},
+  {id:'Despina',g:'F',d:'Suave, polida'},
+  {id:'Enceladus',g:'M',d:'Respirado, íntimo'},
+  {id:'Erinome',g:'F',d:'Clara, precisa'},
+  {id:'Fenrir',g:'M',d:'Excitável, enérgico'},
+  {id:'Gacrux',g:'F',d:'Madura, experiente'},
+  {id:'Iapetus',g:'M',d:'Claro, articulado'},
+  {id:'Kore',g:'F',d:'Firme, confiante'},
+  {id:'Laomedeia',g:'F',d:'Animada, upbeat'},
+  {id:'Leda',g:'F',d:'Jovial, jovem'},
+  {id:'Orus',g:'M',d:'Firme, épico'},
+  {id:'Pulcherrima',g:'F',d:'Direta, projetada'},
+  {id:'Puck',g:'M',d:'Animado, versátil'},
+  {id:'Rasalgethi',g:'M',d:'Informativo, calmo'},
+  {id:'Sadachbia',g:'M',d:'Vivo, expressivo'},
+  {id:'Sadaltager',g:'M',d:'Ponderado, sábio'},
+  {id:'Schedar',g:'M',d:'Equilibrado, neutro'},
+  {id:'Sulafat',g:'F',d:'Calorosa, envolvente'},
+  {id:'Umbriel',g:'M',d:'Fácil, descontraído'},
+  {id:'Vindemiatrix',g:'F',d:'Gentil, cuidadosa'},
+  {id:'Zephyr',g:'F',d:'Brilhante, etérea'},
+  {id:'Zubenelgenubi',g:'M',d:'Casual, natural'},
+];
+const GROK_VOICES=[
+  {id:'Eve',g:'F',d:'Quente, conversacional'},
+  {id:'Ara',g:'F',d:'Vibrante, energética'},
+  {id:'Rex',g:'M',d:'Confiante, claro'},
+  {id:'Sal',g:'M',d:'Amigável, natural'},
+  {id:'Leo',g:'M',d:'Profundo, dramático'},
+];
+
+const GI={F:'♀',M:'♂'};
+const SAMPLES={
+  'pt-BR':'Olá! Esta é uma amostra da minha voz em português brasileiro.',
+  'pt-PT':'Olá! Esta é uma amostra em português europeu.',
+  'en-US':'Hello! This is a voice sample in American English.',
+  'en-GB':'Hello! This is a voice sample in British English.',
+  'es-ES':'¡Hola! Esta es una muestra de mi voz.',
+  'fr-FR':'Bonjour! Ceci est un échantillon de ma voix.',
+  'de-DE':'Hallo! Dies ist eine Probe meiner Stimme.',
+  'it-IT':'Ciao! Questo è un campione della mia voce.',
+};
+const RES_PX={'480p':480*854,'720p':1280*720,'1080p':1920*1080};
+const CHAR_COLORS=['#FF3D57','#1FBA7A','#4A9EFF','#FFD600'];
+const CHAR_BKGS  =['rgba(255,61,87,.15)','rgba(31,186,122,.15)','rgba(74,158,255,.15)','rgba(255,214,0,.15)'];
+
+/* ═══════════════════════════
+   STATE
+═══════════════════════════ */
+let brief={product:'',goal:'',hasNarr:true,char1:'',char2:'',char3:'',char4:'',idea:''};
+let scriptLines=[];   // [{type:'speech'|'scene'|'ignore', speaker, text, idx}]
+let characters=[];    // [{name, color, bg, voice}]
+let ttsModelKey='gemini';
+let gFilter='all';
+let videoModels=[];
+let selVideoId=null;
+let projDur=8;
+let durManual=false;
+let audioBlobs={};    // {charName: Blob}
+let vidPollTimers=[];
+
+/* ═══════════════════════════
+   INIT
+═══════════════════════════ */
+window.addEventListener('DOMContentLoaded',()=>{
+  const k=localStorage.getItem('or_key');
+  if(k) document.getElementById('apiKey').value=k;
+});
+
+/* ═══════════════════════════
+   FASE 1
+═══════════════════════════ */
+function toggleNarr(v){
+  brief.hasNarr=v;
+  document.getElementById('tg-narr-yes').classList.toggle('on',v);
+  document.getElementById('tg-narr-no').classList.toggle('on',!v);
+}
+
+function goPhase2(){
+  brief.product=document.getElementById('f-product').value.trim();
+  brief.goal   =document.getElementById('f-goal').value;
+  brief.char1  =document.getElementById('f-char1').value.trim();
+  brief.char2  =document.getElementById('f-char2').value.trim();
+  brief.char3  =document.getElementById('f-char3').value.trim();
+  brief.char4  =document.getElementById('f-char4').value.trim();
+  brief.idea   =document.getElementById('f-idea').value.trim();
+  if(!brief.product){alert('Informe o produto ou serviço.');return;}
+  if(!brief.goal)   {alert('Selecione o objetivo do vídeo.');return;}
+  if(!brief.idea)   {alert('Descreva sua ideia para o vídeo.');return;}
+  setPhase(2);
+  document.getElementById('scriptSection').style.display='none';
+  document.getElementById('apiCard').style.display='block';
+}
+
+/* ═══════════════════════════
+   FASE 2
+═══════════════════════════ */
+async function confirmApiAndGenerate(){
+  const k=document.getElementById('apiKey').value.trim();
+  if(!k){alert('Insira sua chave de API do OpenRouter.');return;}
+  localStorage.setItem('or_key',k);
+  document.getElementById('apiSpin').style.display='inline-block';
+  document.getElementById('apiBtn').textContent='Gerando roteiro…';
+  document.getElementById('apiCard').querySelector('button').disabled=true;
+  await generateScript();
+  document.getElementById('apiSpin').style.display='none';
+  document.getElementById('apiBtn').textContent='Confirmar e gerar roteiro';
+  document.getElementById('apiCard').querySelector('button').disabled=false;
+  document.getElementById('apiCard').style.display='none';
+  document.getElementById('scriptSection').style.display='block';
+}
+
+async function generateScript(){
+  const chars=[];
+  if(brief.hasNarr) chars.push('NARRADOR');
+  if(brief.char1)   chars.push(brief.char1.toUpperCase());
+  if(brief.char2)   chars.push(brief.char2.toUpperCase());
+  if(brief.char3)   chars.push(brief.char3.toUpperCase());
+  if(brief.char4)   chars.push(brief.char4.toUpperCase());
+  if(!chars.length) chars.push('NARRADOR');
+
+  const goalLabels={awareness:'apresentar e gerar awareness',conversao:'vender e converter',engajamento:'gerar engajamento e viralizar',educacao:'educar sobre o produto',depoimento:'mostrar depoimento real',lancamento:'revelar lançamento'};
+  const goal=goalLabels[brief.goal]||brief.goal;
+  const charList=chars.join(', ');
+
+  const prompt=`Você é roteirista especializado em vídeos virais para redes sociais. Crie um roteiro de vídeo de no máximo 30 segundos para o seguinte briefing:
+
+PRODUTO: ${brief.product}
+OBJETIVO: ${goal}
+PERSONAGENS: ${charList}
+IDEIA: ${brief.idea}
+
+REGRAS ABSOLUTAS DE FORMATO — siga exatamente:
+1. CENAS VISUAIS obrigatoriamente entre parênteses: (descrição cinematográfica detalhada da cena, sem mencionar falas)
+2. FALAS dos personagens: PERSONAGEM: texto falado
+3. NUNCA coloque fala dentro de parênteses
+4. NUNCA coloque descrição de cena fora de parênteses
+5. O roteiro DEVE começar com uma cena (entre parênteses)
+6. O roteiro DEVE terminar com uma cena (entre parênteses)
+7. Máximo 80 palavras de fala no total (conta apenas o texto fora dos parênteses)
+8. Mínimo 2 cenas visuais
+
+EXEMPLO DO FORMATO CORRETO:
+(Cozinha moderna iluminada, produto em destaque na bancada, câmera aproximando devagar)
+ANA: Você já tentou isso antes?
+(Close no rosto de Ana, expressão curiosa e animada)
+LUCAS: Nunca. Mas hoje vai mudar tudo.
+(Produto sendo usado, resultado visível, música energética, fade out com logo)
+
+Responda SOMENTE com o roteiro no formato acima, sem explicações, sem título, sem numeração.`;
+
+  try{
+    const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+apiKey(),'Content-Type':'application/json'},
+      body:JSON.stringify({model:'anthropic/claude-sonnet-4',max_tokens:800,messages:[{role:'user',content:prompt}]})
+    });
+    const d=await r.json();
+    const text=d.choices?.[0]?.message?.content;
+    if(text){
+      parseAndRenderScript(text.trim());
+    }
+  }catch(e){
+    alert('Erro ao gerar roteiro: '+e.message);
+    document.getElementById('apiCard').style.display='block';
+    document.getElementById('scriptSection').style.display='none';
+  }
+}
+
+async function regenScript(){
+  const sp=document.getElementById('regenSpin');
+  sp.style.display='inline-block';
+  document.querySelector('#p2 .btn-ghost').disabled=true;
+  await generateScript();
+  sp.style.display='none';
+  document.querySelector('#p2 .btn-ghost').disabled=false;
+}
+
+function parseAndRenderScript(raw){
+  const rawLines=raw.split('\n').filter(l=>l.trim());
+  scriptLines=rawLines.map((l,i)=>{
+    const t=l.trim();
+    if(/^\(.*\)$/.test(t)||t.startsWith('(')){
+      return{idx:i,type:'scene',speaker:null,text:t.replace(/^\(|\)$/g,'').trim()};
+    }
+    const m=t.match(/^([A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇÑ][A-ZÁÉÍÓÚÀÂÊÔÃÕÜÇÑ\s\-_0-9]{0,29}):\s*(.+)/);
+    if(m){
+      const sp=m[1].trim();
+      const isNarr=/^NARRADOR?$/i.test(sp)||sp==='NARRATOR';
+      return{idx:i,type:isNarr?'narrator':'speech',speaker:sp,text:m[2].trim()};
+    }
+    if(t.length>1) return{idx:i,type:'narrator',speaker:'NARRADOR',text:t};
+    return null;
+  }).filter(Boolean);
+
+  renderScriptLines();
+  updateTimerBadge();
+  buildCharacters();
+}
+
+function renderScriptLines(){
+  const cont=document.getElementById('scriptLines');
+  cont.innerHTML='';
+  scriptLines.forEach((l,i)=>{
+    const row=document.createElement('div');
+    row.className='sl'+(l.type==='ignore'?' ignored':'');
+    row.id='sl-'+i;
+
+    const types=l.type==='scene'?['scene','speech','ignore']:['speech','scene','ignore'];
+    const typeLabels={speech:'🎙 fala',scene:'🎬 cena',ignore:'❌ ignorar',narrator:'🎙 narrador'};
+    const dispType=l.type==='narrator'?'speech':l.type;
+
+    const btn=document.createElement('button');
+    btn.className='sl-type-btn '+(l.type==='ignore'?'ignore':l.type==='scene'?'scene':'speech');
+    btn.textContent=typeLabels[l.type]||typeLabels[dispType];
+    btn.title='Clique para trocar o tipo';
+    btn.onclick=()=>cycleType(i);
+
+    const content=document.createElement('div');
+    content.className='sl-content';
+    if(l.speaker){
+      const sp=document.createElement('div');
+      sp.className='sl-speaker';sp.textContent=l.speaker;
+      content.appendChild(sp);
+    }
+    const txt=document.createElement('div');
+    txt.className='sl-text';txt.textContent=l.text;
+    content.appendChild(txt);
+
+    row.appendChild(btn);
+    row.appendChild(content);
+    cont.appendChild(row);
+  });
+
+  const total=scriptLines.length;
+  const speech=scriptLines.filter(l=>l.type==='speech'||l.type==='narrator').length;
+  const scenes=scriptLines.filter(l=>l.type==='scene').length;
+  document.getElementById('scriptStats').textContent=`${total} linhas · ${speech} falas → 🎙 · ${scenes} cenas → 🎬`;
+}
+
+function cycleType(i){
+  const l=scriptLines[i];
+  const order=['speech','scene','ignore'];
+  const cur=l.type==='narrator'?'speech':l.type;
+  const next=order[(order.indexOf(cur)+1)%order.length];
+  l.type=next;
+  renderScriptLines();
+  updateTimerBadge();
+}
+
+function updateTimerBadge(){
+  const speechWords=scriptLines
+    .filter(l=>l.type==='speech'||l.type==='narrator')
+    .reduce((a,l)=>a+words(l.text),0);
+  const dur=speechWords>0?Math.round(speechWords/3):0;
+  const badge=document.getElementById('timerBadge');
+  const over=document.getElementById('overTip');
+  badge.textContent=dur+'s de fala';
+  if(dur===0){badge.className='timer-badge ok';badge.textContent='—';}
+  else if(dur<=25){badge.className='timer-badge ok';}
+  else if(dur<=30){badge.className='timer-badge warn';}
+  else{badge.className='timer-badge over';}
+  over.style.display=dur>30?'block':'none';
+  projDur=Math.min(dur||8,30);
+
+  // aviso se não há cenas visuais
+  const sceneCount = scriptLines.filter(l=>l.type==='scene').length;
+  const noScenesTip = document.getElementById('noScenesTip');
+  if(noScenesTip) noScenesTip.style.display = sceneCount===0 && scriptLines.length>0 ? 'block' : 'none';
+}
+
+function words(t){return t.trim().split(/\s+/).filter(w=>w).length;}
+
+function buildCharacters(){
+  const seen=new Set();
+  const chars=[];
+  scriptLines.forEach(l=>{
+    if((l.type==='speech'||l.type==='narrator')&&l.speaker&&!seen.has(l.speaker)){
+      seen.add(l.speaker);
+      const i=chars.length%4;
+      chars.push({name:l.speaker,color:CHAR_COLORS[i],bg:CHAR_BKGS[i],voice:voiceList()[0]?.id||''});
+    }
+  });
+  if(!chars.length){
+    chars.push({name:'NARRADOR',color:CHAR_COLORS[0],bg:CHAR_BKGS[0],voice:voiceList()[0]?.id||''});
+  }
+  characters=chars;
+}
+
+function approveScript(){
+  const speech=scriptLines.filter(l=>l.type==='speech'||l.type==='narrator');
+  const scenes=scriptLines.filter(l=>l.type==='scene');
+  if(!speech.length){alert('Nenhuma fala encontrada no roteiro. Classifique ao menos uma linha como 🎙 fala.');return;}
+  if(!scenes.length){
+    const ok=confirm('O roteiro nao tem cenas visuais (parênteses). O sistema usará o briefing como base visual. Continuar?');
+    if(!ok)return;
+  }
+  buildCharacters();
+  setPhase(3);
+  renderVoiceGallery();
+  renderCharVoiceList();
+}
+
+function openEditModal(){
+  const raw=scriptLines.map(l=>{
+    if(l.type==='scene') return '('+l.text+')';
+    if(l.speaker) return l.speaker+': '+l.text;
+    return l.text;
+  }).join('\n');
+  document.getElementById('editScriptTa').value=raw;
+  document.getElementById('editModal').style.display='flex';
+}
+function closeEditModal(){document.getElementById('editModal').style.display='none';}
+function applyEdit(){
+  const raw=document.getElementById('editScriptTa').value;
+  parseAndRenderScript(raw);
+  closeEditModal();
+}
+
+/* ═══════════════════════════
+   FASE 3 — VOZES
+═══════════════════════════ */
+function voiceList(){return ttsModelKey==='gemini'?GEMINI_VOICES:GROK_VOICES;}
+
+function onTtsModelChange(){
+  ttsModelKey=document.getElementById('ttsModelSel').value;
+  renderVoiceGallery();
+  buildCharacters();
+  renderCharVoiceList();
+}
+function onLangChange(){/* idioma usado no demo de voz */}
+
+function setGF(f){
+  gFilter=f;
+  ['all','F','M','child'].forEach(id=>document.getElementById('gf-'+id).classList.toggle('on',id===f));
+  document.getElementById('childVoiceTip').style.display=f==='child'?'block':'none';
+  document.querySelectorAll('.vc').forEach(c=>{
+    const g=c.dataset.g;
+    const show=gFilter==='all'||gFilter==='child'||(gFilter==='F'&&g==='F')||(gFilter==='M'&&g==='M');
+    c.classList.toggle('hidden',!show);
+  });
+}
+
+function renderVoiceGallery(){
+  const grid=document.getElementById('voiceGallery');
+  grid.innerHTML='';
+  voiceList().forEach(v=>{
+    const card=document.createElement('div');
+    card.className='vc';card.id='vcg-'+v.id;card.dataset.g=v.g;
+    card.innerHTML=`<div class="vc-top"><div class="vc-name">${v.id}</div><div class="vc-g">${GI[v.g]||''}</div></div><div class="vc-desc">${v.d}</div><button class="vc-play">▶ ouvir</button><div class="vc-check">✓</div>`;
+    card.addEventListener('click',e=>{if(!e.target.closest('.vc-play'))highlightVoice(v.id);});
+    card.querySelector('.vc-play').addEventListener('click',function(e){e.stopPropagation();demoVoice(v.id,this);});
+    grid.appendChild(card);
+  });
+}
+
+function highlightVoice(id){
+  document.querySelectorAll('.vc').forEach(c=>c.classList.remove('on'));
+  const c=document.getElementById('vcg-'+id);if(c)c.classList.add('on');
+}
+
+async function demoVoice(voiceId,btn){
+  const k=apiKey();if(!k){alert('Insira a chave de API.');return;}
+  const lang=document.getElementById('lang').value;
+  const sample=SAMPLES[lang]||SAMPLES['pt-BR'];
+  const orig=btn.innerHTML;
+  btn.innerHTML='<span class="spin r" style="width:11px;height:11px;border-width:2px"></span>';
+  btn.classList.add('playing');btn.disabled=true;
+  try{
+    const m=TTS[ttsModelKey];
+    const r=await fetch('https://openrouter.ai/api/v1/audio/speech',{
+      method:'POST',headers:{'Authorization':'Bearer '+k,'Content-Type':'application/json'},
+      body:JSON.stringify({model:m.id,input:sample,voice:voiceId,response_format:m.fmt})
+    });
+    if(!r.ok){let msg='HTTP '+r.status;try{const ct=r.headers.get('content-type')||'';if(ct.includes('json')){const j=await r.json();msg=j?.error?.message||msg;}else{const t=await r.text();if(t)msg+=': '+t.slice(0,200);}}catch(_){}throw new Error(msg);}
+    await playBuf(await r.arrayBuffer(),m.fmt,m.sr);
+  }catch(e){alert('Erro: '+e.message);}
+  btn.innerHTML=orig;btn.classList.remove('playing');btn.disabled=false;
+}
+
+function renderCharVoiceList(){
+  const cont=document.getElementById('charVoiceList');
+  cont.innerHTML='';
+  const vl=voiceList();
+  characters.forEach((ch,i)=>{
+    const opts=vl.map(v=>`<option value="${v.id}" ${v.id===ch.voice?'selected':''}>${GI[v.g]||''} ${v.id} — ${v.d}</option>`).join('');
+    const row=document.createElement('div');
+    row.className='cv-row';
+    row.innerHTML=`
+      <div class="cv-avatar" style="background:${ch.bg};color:${ch.color}">${ch.name.slice(0,2).toUpperCase()}</div>
+      <div class="cv-name">${esc(ch.name)}</div>
+      <select class="cv-select" id="cvs-${i}">${opts}</select>
+      <button class="cv-demo btn-ghost" title="Ouvir">▶</button>`;
+    cont.appendChild(row);
+    // bind select via addEventListener (evita template literal em atributo HTML)
+    const sel = row.querySelector('.cv-select');
+    if(sel){
+      const idx_i = i;
+      sel.addEventListener('change', function(){ upChar(idx_i, this.value); });
+    }
+    row.querySelector('.cv-demo').addEventListener('click',function(){
+      demoVoice(document.getElementById('cvs-'+i).value,this);
+    });
+  });
+}
+
+function upChar(i,v){if(characters[i])characters[i].voice=v;}
+
+function goPhase2Back(){setPhase(2);document.getElementById('scriptSection').style.display='block';document.getElementById('apiCard').style.display='none';}
+
+async function approveVoices(){
+  // sincroniza vozes dos selects
+  characters.forEach((_,i)=>{
+    const s=document.getElementById('cvs-'+i);
+    if(s&&characters[i])characters[i].voice=s.value;
+  });
+  setPhase(4);
+  await generateAudios();
+  loadVideoModels();
+  renderScenePromptList();
+}
+
+/* ═══════════════════════════
+   FASE 4 — ÁUDIO
+═══════════════════════════ */
+async function generateAudios(){
+  const k=apiKey();
+  const speechLines=scriptLines.filter(l=>l.type==='speech'||l.type==='narrator');
+  const cont=document.getElementById('audioJobsList');
+  cont.innerHTML='';
+  audioBlobs={};
+
+  // um job por personagem (agrupa falas)
+  const byChar={};
+  speechLines.forEach(l=>{
+    const n=l.speaker||'NARRADOR';
+    if(!byChar[n])byChar[n]=[];
+    byChar[n].push(l.text);
+  });
+
+  const charNames=Object.keys(byChar);
+  let doneCount=0;
+
+  for(const name of charNames){
+    const ch=characters.find(c=>c.name.toUpperCase()===name.toUpperCase())||characters[0];
+    const jobEl=createAudioJobEl(name,ch);
+    cont.appendChild(jobEl);
+
+    try{
+      const fullText=byChar[name].join(' ');
+      const m=TTS[ttsModelKey];
+      const body={model:m.id,input:fullText,response_format:m.fmt};
+      if(ch.voice)body.voice=ch.voice;
+
+      const r=await fetch('https://openrouter.ai/api/v1/audio/speech',{
+        method:'POST',headers:{'Authorization':'Bearer '+k,'Content-Type':'application/json'},
+        body:JSON.stringify(body)
+      });
+      if(!r.ok){let msg='HTTP '+r.status;try{const ct=r.headers.get('content-type')||'';if(ct.includes('json')){const j=await r.json();msg=j?.error?.message||msg;}else{const t=await r.text();if(t)msg+=': '+t.slice(0,200);}}catch(_){}throw new Error(msg);}
+
+      const buf=await r.arrayBuffer();
+      const blob=m.fmt==='pcm'?pcm2wav(buf,m.sr,1,16):new Blob([buf],{type:'audio/mpeg'});
+      audioBlobs[name]=blob;
+
+      // atualiza UI
+      // marca dot verde
+      const dot = jobEl.querySelector('.aj-dot'); if(dot) dot.className='aj-dot ok';
+      // atualiza label da voz
+      const ch2 = characters.find(c=>c.name.toUpperCase()===name.toUpperCase());
+      const voiceLbl = document.getElementById('arcvoice-'+esc(name));
+      if (voiceLbl) voiceLbl.textContent = (ch2?.voice||'') + ' · pronto ✓';
+      // coloca o áudio no player
+      const audioEl = document.getElementById('arcaudio-'+esc(name));
+      if (audioEl){
+        const url2 = URL.createObjectURL(blob);
+        audioEl.src = url2;
+        audioEl.style.display = 'block';
+      }
+      doneCount++;
+    }catch(e){
+      const dot=jobEl.querySelector('.aj-dot');dot.className='aj-dot err';
+      const status=jobEl.querySelector('.aj-status');status.textContent='Erro: '+e.message.slice(0,60);
+    }
+  }
+
+  document.getElementById('audioHoldBadge').textContent=`${doneCount}/${charNames.length} prontos`;
+  document.getElementById('audioHoldBadge').className='ct-badge '+(doneCount===charNames.length?'green':'red');
+  if(doneCount===charNames.length){
+    document.getElementById('audioReadyTip').style.display='block';
+    document.getElementById('videoConfigCard').style.display='block';
+  }
+}
+
+function createAudioJobEl(name,ch){
+  const div=document.createElement('div');
+  div.className='audio-job';
+  div.innerHTML=`
+    <div class="aj-dot run"></div>
+    <div class="cv-avatar" style="background:${ch?.bg||'rgba(255,61,87,.15)'};color:${ch?.color||'#FF3D57'};width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${name.slice(0,2).toUpperCase()}</div>
+    <div class="aj-name">${esc(name)}</div>
+    <div class="aj-status">Gerando…</div>
+    <button class="aj-play btn-ghost" style="display:none">▶</button>`;
+  return div;
+}
+
+/* ═══════════════════════════
+   FASE 4 — VÍDEO
+═══════════════════════════ */
+
+function buildProductionPlan(){
+  const scenes  = scriptLines.filter(l => l.type === 'scene');
+  const model   = videoModels.find(m => m.id === selVideoId);
+  const maxDur  = model ? Math.max(...(model.supported_durations || [8])) : 8;
+  const clipDur = Math.min(parseInt(document.getElementById('durSlider').value || 8), maxDur);
+  const prompts = [];
+  scenes.forEach((_, i) => {
+    const el  = document.getElementById('spt-' + i);
+    const txt = (el ? el.value : scenes[i].text).trim();
+    if (txt) prompts.push(txt);
+  });
+  // Se não há cenas explícitas, cria prompts a partir do contexto visual — NUNCA usa falas
+  if (!prompts.length){
+    // tenta construir prompt visual a partir do produto + objetivo + ideia (sem falas)
+    const fallbackPrompt = [
+      'Vídeo publicitário profissional para: ' + brief.product + '.',
+      brief.goal ? 'Objetivo: ' + brief.goal + '.' : '',
+      brief.idea ? 'Conceito visual: ' + brief.idea + '.' : '',
+      'Cinematográfico, sem texto na tela, sem falas visíveis.',
+    ].filter(Boolean).join(' ');
+    prompts.push(fallbackPrompt);
+  }
+  return { prompts, clipDur, maxDur, model };
+}
+
+function renderScenePromptList(){
+  const scenes = scriptLines.filter(l => l.type === 'scene');
+  const sec    = document.getElementById('scenesSection');
+  const cont   = document.getElementById('scenePromptList');
+  cont.innerHTML = '';
+  if (!scenes.length){ sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  scenes.forEach((l, i) => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;align-items:flex-start;gap:8px;margin-bottom:8px';
+    wrap.innerHTML = '<div style="font-size:11px;font-weight:600;color:var(--text3);min-width:24px;padding-top:8px">#' + (i+1) + '</div>';
+    const ta = document.createElement('textarea');
+    ta.id = 'spt-' + i; ta.value = l.text; ta.rows = 2;
+    ta.style.cssText = 'flex:1;font-family:var(--font);font-size:13px;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:var(--r-lg);padding:8px 12px;outline:none;resize:vertical;line-height:1.5;min-height:52px';
+    ta.addEventListener('focus', function(){ this.style.borderColor='var(--red)'; });
+    ta.addEventListener('blur',  function(){ this.style.borderColor='var(--border2)'; });
+    ta.addEventListener('input', renderStepsPreview);
+    wrap.appendChild(ta);
+    cont.appendChild(wrap);
+  });
+}
+
+function renderStepsPreview(){
+  const plan = buildProductionPlan();
+  const cont = document.getElementById('stepsPreviewList');
+  const sec  = document.getElementById('stepsPreview');
+  if (!plan.prompts.length){ sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  cont.innerHTML = '';
+  const audioNames = Object.keys(audioBlobs);
+  if (audioNames.length){
+    const el = document.createElement('div');
+    el.className = 'steps-preview-item';
+    el.innerHTML = '<div class="spi-num">✓</div><span style="color:var(--green)">Narração pronta (' + audioNames.length + ' personagem' + (audioNames.length>1?'s':'') + ')</span>';
+    cont.appendChild(el);
+  }
+  plan.prompts.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'steps-preview-item highlight';
+    el.innerHTML = '<div class="spi-num">' + (i+1) + '</div><span>Cena ' + (i+1) + ' — ' + plan.clipDur + 's &mdash; <em style="color:var(--text3)">' + p.slice(0,60) + (p.length>60?'…':'') + '</em></span>';
+    cont.appendChild(el);
+  });
+  // etapa de unificação/mix
+  const numSteps = plan.prompts.length + 1;
+  const hasAudioPrev = Object.keys(audioBlobs).length > 0;
+  {
+    const el = document.createElement('div');
+    el.className = 'steps-preview-item';
+    const total = plan.prompts.length * plan.clipDur;
+    let desc = '';
+    if (plan.prompts.length > 1 && hasAudioPrev)
+      desc = 'Concatenar '+plan.prompts.length+' clips (~'+total+'s) + mixar narração → 1 MP4 final';
+    else if (plan.prompts.length > 1)
+      desc = 'Concatenar '+plan.prompts.length+' clips (~'+total+'s) → 1 MP4 final';
+    else if (hasAudioPrev)
+      desc = 'Mixar narração voice-over no vídeo → MP4 final';
+    else
+      desc = 'Finalizar vídeo';
+    el.innerHTML = '<div class="spi-num">'+numSteps+'</div><span>'+
+      (hasAudioPrev ? '🎙🎬 ' : '🔗 ')+desc+'</span>';
+    cont.appendChild(el);
+  }
+  const btn = document.getElementById('genVideoBtn');
+  if (btn){
+    const total = plan.prompts.length * plan.clipDur;
+    btn.textContent = plan.prompts.length > 1
+      ? 'Gerar vídeo (' + plan.prompts.length + ' cenas · ~' + total + 's)'
+      : 'Gerar vídeo';
+  }
+}
+
+function onParamChange(){ updateVCosts(); renderStepsPreview(); }
+
+async function loadVideoModels(){
+  if (videoModels.length){ renderVModelGrid(); return; }
+  const k = apiKey();
+  try{
+    const headers = k ? { Authorization:'Bearer '+k } : {};
+    const r = await fetch('https://openrouter.ai/api/v1/videos/models',{headers});
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    const d = await r.json();
+    videoModels = (d.data||[]).sort((a,b)=>b.created-a.created);
+    if (videoModels.length) selVideoId = videoModels[0].id;
+    renderVModelGrid();
+    renderScenePromptList();
+    renderStepsPreview();
+  }catch(e){
+    document.getElementById('vmGrid').innerHTML='<div style="font-size:13px;color:var(--red)">Erro: '+e.message+'</div>';
+  }
+}
+
+function estimateCost(m,dur,res,audio){
+  const skus=m.pricing_skus; if(!skus)return null;
+  if(Object.keys(skus).some(k=>k.startsWith('video_tokens'))){
+    const px=RES_PX[res]||RES_PX['720p'];
+    const sku=audio&&skus['video_tokens']?'video_tokens':'video_tokens_without_audio';
+    return dur*24*px*parseFloat(skus[sku]||skus['video_tokens']||0);
+  }
+  const r2=res.toLowerCase(),a2=audio?'with_audio':'without_audio';
+  for(const k of['duration_seconds_'+a2+'_'+r2,'duration_seconds_'+a2,'duration_seconds_'+r2,'duration_seconds']){
+    if(skus[k]!==undefined)return dur*parseFloat(skus[k]);
+  }
+  return dur*parseFloat(Object.values(skus)[0]);
+}
+function cpLbl(usd){
+  if(usd===null||isNaN(usd))return{t:'—',c:''};
+  if(usd<0.01)return{t:'< $0.01',c:'cheap'};
+  if(usd<0.50)return{t:'$'+usd.toFixed(2),c:'cheap'};
+  if(usd<2)   return{t:'$'+usd.toFixed(2),c:'mid'};
+  return{t:'$'+usd.toFixed(2),c:'pricey'};
+}
+
+function renderVModelGrid(){
+  const dur   = parseInt(document.getElementById('durSlider').value)||8;
+  const res   = document.getElementById('resol').value;
+  const audio = document.getElementById('vaudio').value==='true';
+  const cont  = document.getElementById('vmGrid');
+  const grid  = document.createElement('div'); grid.className='vm-grid';
+  videoModels.forEach((m,i)=>{
+    const maxD  = Math.max(...(m.supported_durations||[8]));
+    const cost  = estimateCost(m,Math.min(dur,maxD),res,audio);
+    const{t,c}  = cpLbl(cost);
+    const maxR  = m.supported_resolutions?m.supported_resolutions[m.supported_resolutions.length-1]:'720p';
+    const prov  = m.name.split(':')[0].trim(), short=(m.name.split(':')[1]||m.name).trim();
+    const card  = document.createElement('div');
+    card.className='vm-card'+(i===0?' on':'');
+    card.dataset.id=m.id; card.dataset.max=maxD;
+    card.onclick=()=>selVModel(card,m.id);
+    const tags=[];
+    if(m.generate_audio)tags.push('<span class="vtag g">audio</span>');
+    if(maxR==='4K')tags.push('<span class="vtag b">4K</span>');
+    else if(maxR==='1080p')tags.push('<span class="vtag b">1080p</span>');
+    tags.push('<span class="vtag">max '+maxD+'s/cena</span>');
+    card.innerHTML='<div class="vmc-top"><div><div class="vmc-name">'+esc(short)+'</div><div class="vmc-prov">'+esc(prov)+'</div></div><span class="cpill '+c+'">'+t+'</span></div><div class="vmc-tags">'+tags.join('')+'</div>';
+    grid.appendChild(card);
+  });
+  cont.innerHTML=''; cont.appendChild(grid);
+  const sel = videoModels.find(m=>m.id===selVideoId);
+  if(sel){
+    const maxD=Math.max(...(sel.supported_durations||[8]));
+    const sl=document.getElementById('durSlider');
+    sl.max=maxD;
+    if(parseInt(sl.value)>maxD){sl.value=maxD;document.getElementById('durBig').textContent=maxD;}
+    document.getElementById('durNote').textContent='Maximo '+maxD+'s por cena para este modelo';
+  }
+  renderStepsPreview();
+}
+
+function selVModel(el,id){
+  document.querySelectorAll('.vm-card').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); selVideoId=id; updateVCosts();
+  const m=videoModels.find(v=>v.id===id);
+  const maxD=m?Math.max(...(m.supported_durations||[8])):8;
+  const sl=document.getElementById('durSlider');
+  sl.max=maxD;
+  if(parseInt(sl.value)>maxD){sl.value=maxD;document.getElementById('durBig').textContent=maxD;}
+  document.getElementById('durNote').textContent='Maximo '+maxD+'s por cena';
+  renderStepsPreview();
+}
+function updateVCosts(){ if(videoModels.length)renderVModelGrid(); }
+
+function syncDuration(){
+  if(durManual)return;
+  const d=Math.min(projDur,8);
+  document.getElementById('durSlider').value=d;
+  document.getElementById('durBig').textContent=d;
+}
+function onDurSlider(v){
+  durManual=true;
+  document.getElementById('durBig').textContent=parseInt(v);
+  updateVCosts(); renderStepsPreview();
+}
+
+// ── PRODUÇÃO ──────────────────────────────────────────────────────────────
+let ffmpegInstance = null;
+let pipelineElapsedTimer = null;
+let clipBlobs = {};          // {idx: Blob} — clips prontos (sobrevive a regerações)
+let clipPrompts = [];        // prompts da sessão atual
+let clipDurSec = 8;
+
+// Volta para fase 3 sem perder dados (para reeditar narração)
+function goPhase3ForEdit(){
+  setPhase(3);
+  renderVoiceGallery();
+  renderCharVoiceList();
+}
+
+// Mostra card de revisão de áudio com player e identificação clara
+function renderAudioReview(){
+  const list = document.getElementById('audioJobsList');
+  // atualiza cards existentes com players se já existem blobs
+  Object.keys(audioBlobs).forEach(name => {
+    const existing = list.querySelector('[data-char="'+name+'"]');
+    if (existing){
+      const audio = existing.querySelector('audio');
+      if (audio && !audio.src){
+        const url = URL.createObjectURL(audioBlobs[name]);
+        audio.src = url;
+      }
+    }
+  });
+}
+
+async function startVideoProduction(){
+  const k = apiKey();
+  if (!k)           { alert('Chave de API não encontrada.'); return; }
+  if (!selVideoId)  { alert('Selecione um modelo de vídeo.'); return; }
+  const plan = buildProductionPlan();
+  if (!plan.prompts.length) { alert('Nenhuma cena encontrada no roteiro.'); return; }
+
+  // salva prompts e duração para poder regerar individualmente
+  clipPrompts = plan.prompts;
+  clipDurSec  = plan.clipDur;
+  clipBlobs   = {};   // reseta blobs da sessão
+
+  // mostra área de clips, esconde config
+  document.getElementById('videoConfigCard').style.display   = 'none';
+  document.getElementById('productionPipeline').style.display = 'block';
+  document.getElementById('clipsArea').style.display          = 'block';
+  document.getElementById('finalResult').style.display        = 'none';
+  document.getElementById('backBtn4').style.display           = 'none';
+  document.getElementById('reunifyBar').style.display         = 'none';
+  document.getElementById('partialReunifyBar').style.display  = 'none';
+
+  // monta pipeline de progresso geral
+  const steps = plan.prompts.map((p,i) => ({
+    id: 'step-clip-'+i, icon: '🎬',
+    name: 'Cena '+(i+1)+' de '+plan.prompts.length,
+    desc: p.slice(0,60)+(p.length>60?'...':'')
+  }));
+  const hasAudio = Object.keys(audioBlobs).length > 0;
+  if (plan.prompts.length > 1)
+    steps.push({id:'step-merge', icon:'🔗', name:'Unificando cenas', desc: plan.prompts.length+' clips → 1 vídeo'});
+  else
+    steps.push({id:'step-merge', icon:'🔗', name: hasAudio ? 'Mixando narração' : 'Finalizando', desc: hasAudio ? 'Voice-over sobre o vídeo' : '1 cena'});
+  renderPipelineSteps(steps);
+  updatePipelineMsg('Gerando '+plan.prompts.length+' cena(s) em paralelo…', 0);
+
+  // cria cards individuais de clip
+  const cardsCont = document.getElementById('clipCards');
+  cardsCont.innerHTML = '';
+  plan.prompts.forEach((p, i) => cardsCont.appendChild(createClipCard(i, plan.prompts.length, p)));
+
+  const t0 = Date.now();
+  pipelineElapsedTimer = setInterval(() => {
+    const el = document.getElementById('pipelineElapsed');
+    if (el) el.textContent = Math.floor((Date.now()-t0)/1000)+'s';
+  }, 1000);
+
+  vidPollTimers.forEach(clearInterval); vidPollTimers = [];
+
+  // dispara todos em paralelo — cada um resolve independentemente
+  const promises = plan.prompts.map((prompt, i) =>
+    runVideoJob(k, prompt, plan.clipDur, i, steps.length)
+      .catch(e => { console.warn('Clip '+i+' falhou:', e.message); return null; })
+  );
+  await Promise.all(promises);
+
+  clearInterval(pipelineElapsedTimer);
+
+  const readyCount   = Object.keys(clipBlobs).length;
+  const totalScenes  = plan.prompts.length;
+  const failedCount  = totalScenes - readyCount;
+
+  if (readyCount === 0){
+    updatePipelineMsg('Todas as cenas falharam. Tente regerar individualmente.', null);
+    document.getElementById('pipelineBadge').textContent = 'erro';
+    document.getElementById('pipelineBadge').className   = 'ct-badge red';
+    document.getElementById('backBtn4').style.display    = 'block';
+    return;
+  }
+
+  // auto-merge se tudo ok; parcial se houve falhas
+  if (failedCount === 0){
+    document.getElementById('reunifyBar').style.display  = 'block';
+    document.getElementById('reunifyCount').textContent  = readyCount+' cenas prontas';
+    updatePipelineMsg('Todas as cenas prontas!', 95);
+    document.getElementById('pipelineBadge').textContent = 'pronto';
+    document.getElementById('pipelineBadge').className   = 'ct-badge green';
+    // merge automático
+    await doMerge();
+  } else {
+    document.getElementById('partialReunifyBar').style.display  = 'block';
+    document.getElementById('partialReunifyCount').textContent  =
+      readyCount+' prontas, '+failedCount+' com erro — clique em Unificar para usar as prontas';
+    updatePipelineMsg(failedCount+' cena(s) falharam — regere individualmente e unifique.', 80);
+    document.getElementById('pipelineBadge').textContent = 'parcial';
+    document.getElementById('pipelineBadge').className   = 'ct-badge warn';
+  }
+  document.getElementById('backBtn4').style.display = 'block';
+}
+
+// Cria card visual para um clip individual
+function createClipCard(idx, total, prompt){
+  const card = document.createElement('div');
+  card.className = 'clip-card';
+  card.id = 'clip-card-'+idx;
+  card.innerHTML =
+    '<div class="clip-head">'+
+      '<div class="clip-title">🎬 Cena '+(idx+1)+(total>1?' / '+total:'')+
+        '<span style="font-size:11px;font-weight:400;color:var(--text3);margin-left:4px">'+prompt.slice(0,50)+(prompt.length>50?'...':'')+'</span>'+
+      '</div>'+
+      '<span class="clip-badge q" id="clipbadge-'+idx+'">na fila</span>'+
+    '</div>'+
+    '<div class="clip-prog" id="clipprog-'+idx+'">'+
+      '<div class="prog-track"><div class="prog-fill" id="clipfill-'+idx+'" style="width:0%"></div></div>'+
+      '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-top:5px">'+
+        '<span id="clipmsg-'+idx+'">Aguardando…</span>'+
+        '<span id="cliptime-'+idx+'"></span>'+
+      '</div>'+
+    '</div>'+
+    '<div class="clip-result" id="clipresult-'+idx+'" style="display:none">'+
+      '<video id="clipvideo-'+idx+'" controls playsinline></video>'+
+      '<div class="clip-acts">'+
+        '<button class="btn-dl" id="clipdl-'+idx+'">⬇ Baixar cena</button>'+
+        '<button class="btn-ghost" id="clipregen-'+idx+'">↺ Regerar esta cena</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="clip-err" id="cliperr-'+idx+'" style="display:none">'+
+      '<div class="clip-errmsg" id="cliperrMsg-'+idx+'"></div>'+
+      '<div style="margin-top:8px">'+
+        '<button class="btn-cta" id="clipregen2-'+idx+'" style="font-size:12px;height:34px">↺ Tentar novamente</button>'+
+      '</div>'+
+    '</div>';
+  return card;
+}
+
+// Conecta botões de regerar após inserir no DOM
+function bindClipButtons(idx){
+  const regenOk  = document.getElementById('clipregen-'+idx);
+  const regenErr = document.getElementById('clipregen2-'+idx);
+  const regen = () => regenClip(idx);
+  if (regenOk)  regenOk.addEventListener('click',  regen);
+  if (regenErr) regenErr.addEventListener('click',  regen);
+}
+
+// Reprocessa um único clip
+async function regenClip(idx){
+  const k = apiKey();
+  if (!k){ alert('Chave de API não encontrada.'); return; }
+  if (!clipPrompts[idx]){ alert('Prompt da cena não encontrado.'); return; }
+
+  // reset visual do card
+  const card = document.getElementById('clip-card-'+idx);
+  if (!card) return;
+  document.getElementById('clipprog-'+idx).style.display  = 'block';
+  document.getElementById('clipresult-'+idx).style.display = 'none';
+  document.getElementById('cliperr-'+idx).style.display    = 'none';
+  setClipBadge(idx,'q','na fila');
+
+  // remove blob anterior desta cena
+  delete clipBlobs[idx];
+  checkReunifyVisibility();
+
+  try {
+    await runVideoJob(k, clipPrompts[idx], clipDurSec, idx, clipPrompts.length);
+  } catch(e){
+    console.warn('Regerar cena '+idx+' falhou:', e.message);
+  }
+  checkReunifyVisibility();
+}
+
+// Verifica se pode reunificar e mostra os botões corretos
+function checkReunifyVisibility(){
+  const total   = clipPrompts.length;
+  const ready   = Object.keys(clipBlobs).length;
+  const failed  = total - ready;
+
+  document.getElementById('reunifyBar').style.display        = (ready === total && total > 1) ? 'flex' : 'none';
+  document.getElementById('partialReunifyBar').style.display = (ready > 0 && failed > 0) ? 'flex' : 'none';
+
+  if (ready === total && total > 1){
+    document.getElementById('reunifyCount').textContent = ready+' cenas prontas — pronto para unificar';
+  }
+  if (ready > 0 && failed > 0){
+    document.getElementById('partialReunifyCount').textContent =
+      ready+' pronta(s), '+failed+' com erro';
+  }
+  // Se só tem 1 cena e está pronta, mostra resultado direto
+  if (total === 1 && ready === 1){
+    showFinalVideo(clipBlobs[0]);
+  }
+}
+
+// Merge: pega os blobs prontos na ordem e concatena
+async function doMerge(){
+  const readyIdxs = Object.keys(clipBlobs).map(Number).sort((a,b)=>a-b);
+  if (!readyIdxs.length){ alert('Nenhuma cena pronta para unificar.'); return; }
+
+  document.getElementById('reunifyBar').style.display        = 'none';
+  document.getElementById('partialReunifyBar').style.display = 'none';
+  setStepActive('step-merge');
+
+  try{
+    const ff = await loadFFmpeg();
+
+    // ── 1. Concatena clips de vídeo ──────────────────────────────────────
+    let videoBlob;
+    if (readyIdxs.length === 1){
+      videoBlob = clipBlobs[readyIdxs[0]];
+      setStepStatus('step-merge', '1 cena — preparando áudio…');
+    } else {
+      updatePipelineMsg('Unificando '+readyIdxs.length+' cenas…', 88);
+      setStepStatus('step-merge', 'Concatenando '+readyIdxs.length+' clips…');
+      const videoBlobs = readyIdxs.map(i => clipBlobs[i]);
+      videoBlob = await concatVideos(ff, videoBlobs);
+    }
+
+    // ── 2. Mixagem: sobrepõe narração ao vídeo ───────────────────────────
+    const audioNames = Object.keys(audioBlobs);
+    if (audioNames.length > 0){
+      updatePipelineMsg('Mixando narração com o vídeo…', 93);
+      setStepStatus('step-merge', 'Adicionando narração como voice-over…');
+      const finalBlob = await mixAudioVideo(ff, videoBlob, audioNames);
+      setStepDone('step-merge');
+      updatePipelineMsg('Vídeo com narração pronto! 🎬🎙', 100);
+      showFinalVideo(finalBlob, true);
+    } else {
+      // sem áudio — entrega só o vídeo
+      setStepDone('step-merge');
+      updatePipelineMsg('Vídeo final pronto!', 100);
+      showFinalVideo(videoBlob, false);
+    }
+
+  }catch(e){
+    setStepError('step-merge', e.message);
+    updatePipelineMsg('Erro: '+e.message, null);
+    document.getElementById('partialReunifyBar').style.display  = 'flex';
+    document.getElementById('partialReunifyCount').textContent  = 'Erro — tente novamente';
+  }
+}
+
+// Carrega FFmpeg.wasm (cria nova instância a cada vez — v0.12 não é reutilizável)
+async function loadFFmpeg(){
+  setStepStatus('step-merge', 'Carregando engine de vídeo…');
+  try{
+    const {FFmpeg}   = await import('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/esm/index.js');
+    const {toBlobURL}= await import('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/esm/index.js');
+    const base = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd';
+    const ff = new FFmpeg();
+    setStepStatus('step-merge', 'Baixando engine (~31MB, uma vez por sessão)…');
+    await ff.load({
+      coreURL: await toBlobURL(base+'/ffmpeg-core.js',   'text/javascript'),
+      wasmURL: await toBlobURL(base+'/ffmpeg-core.wasm', 'application/wasm'),
+    });
+    return ff;
+  }catch(e){
+    throw new Error('FFmpeg.wasm falhou: '+e.message+
+      ' — O arquivo precisa ser servido via HTTP, não file://.');
+  }
+}
+
+// Concatena array de Blobs de vídeo sem re-encode
+async function concatVideos(ff, blobs){
+  const names = [];
+  for(let i=0;i<blobs.length;i++){
+    const name = 'v'+i+'.mp4';
+    await ff.writeFile(name, new Uint8Array(await blobs[i].arrayBuffer()));
+    names.push(name);
+  }
+  const list = names.map(n=>"file '"+n+"'").join('\n');
+  await ff.writeFile('list.txt', list);
+  await ff.exec(['-f','concat','-safe','0','-i','list.txt','-c','copy','concat.mp4']);
+  const data = await ff.readFile('concat.mp4');
+  // limpeza
+  for(const n of names) ff.deleteFile(n).catch(()=>{});
+  ff.deleteFile('list.txt').catch(()=>{});
+  ff.deleteFile('concat.mp4').catch(()=>{});
+  return new Blob([data], {type:'video/mp4'});
+}
+
+// Monta áudio de narração completo (todos os personagens em sequência)
+// e sobrepõe ao vídeo como voice-over
+async function mixAudioVideo(ff, videoBlob, audioNames){
+  // ── escreve vídeo ──────────────────────────────────────────────────────
+  await ff.writeFile('video.mp4', new Uint8Array(await videoBlob.arrayBuffer()));
+
+  // ── concatena todas as narrações em um único áudio ─────────────────────
+  // ordem: mesma ordem das falas no roteiro
+  const speechLines = scriptLines.filter(l=>l.type==='speech'||l.type==='narrator');
+  const speakerOrder = [];
+  speechLines.forEach(l=>{
+    const n = l.speaker||'NARRADOR';
+    if(!speakerOrder.includes(n)) speakerOrder.push(n);
+  });
+  // filtra só quem tem blob gerado
+  const orderedNames = speakerOrder.filter(n=>audioBlobs[n]);
+  // fallback: qualquer ordem se speakerOrder ficou vazio
+  const finalOrder = orderedNames.length ? orderedNames : audioNames;
+
+  let narrationBlob;
+  const m = TTS[ttsModelKey];
+
+  if(finalOrder.length === 1){
+    narrationBlob = audioBlobs[finalOrder[0]];
+  } else {
+    // concatena os WAV/MP3 dos personagens
+    const aNames = [];
+    for(let i=0;i<finalOrder.length;i++){
+      const ext  = m.fmt==='pcm'?'wav':'mp3';
+      const aName= 'narr'+i+'.'+ext;
+      await ff.writeFile(aName, new Uint8Array(await audioBlobs[finalOrder[i]].arrayBuffer()));
+      aNames.push(aName);
+    }
+    // se só 1 arquivo, usa direto; senão concatena
+    if(aNames.length>1){
+      const aList = aNames.map(n=>"file '"+n+"'").join('\n');
+      await ff.writeFile('alist.txt', aList);
+      await ff.exec(['-f','concat','-safe','0','-i','alist.txt','-c','copy','narration_raw.'+( m.fmt==='pcm'?'wav':'mp3')]);
+      const nd = await ff.readFile('narration_raw.'+(m.fmt==='pcm'?'wav':'mp3'));
+      narrationBlob = new Blob([nd], {type: m.fmt==='pcm'?'audio/wav':'audio/mpeg'});
+      ff.deleteFile('alist.txt').catch(()=>{});
+      ff.deleteFile('narration_raw.'+(m.fmt==='pcm'?'wav':'mp3')).catch(()=>{});
+      for(const n of aNames) ff.deleteFile(n).catch(()=>{});
+    } else {
+      narrationBlob = audioBlobs[finalOrder[0]];
+      for(const n of aNames) ff.deleteFile(n).catch(()=>{});
+    }
+  }
+
+  // ── escreve áudio final ────────────────────────────────────────────────
+  const audioExt = m.fmt==='pcm'?'wav':'mp3';
+  await ff.writeFile('narration.'+audioExt, new Uint8Array(await narrationBlob.arrayBuffer()));
+
+  // ── mixagem: vídeo + narração voice-over ──────────────────────────────
+  // -shortest: termina quando o menor dos dois acabar (vídeo ou áudio)
+  // -c:v copy: não re-encoda o vídeo (rápido e sem perda)
+  // -c:a aac:  converte áudio para AAC (compatível com MP4)
+  // -filter_complex amix: se o vídeo já tiver áudio, mistura; se não, só adiciona
+  await ff.exec([
+    '-i', 'video.mp4',
+    '-i', 'narration.'+audioExt,
+    '-c:v', 'copy',
+    '-c:a', 'aac',
+    '-map', '0:v:0',
+    '-map', '1:a:0',
+    '-shortest',
+    'final_with_audio.mp4'
+  ]);
+
+  const finalData = await ff.readFile('final_with_audio.mp4');
+
+  // limpeza
+  ff.deleteFile('video.mp4').catch(()=>{});
+  ff.deleteFile('narration.'+audioExt).catch(()=>{});
+  ff.deleteFile('final_with_audio.mp4').catch(()=>{});
+
+  return new Blob([finalData], {type:'video/mp4'});
+}
+
+function showFinalVideo(blob, hasNarration){
+  const url = URL.createObjectURL(blob);
+  const vid = document.getElementById('finalVideo');
+  vid.src = url;
+  // atualiza título do resultado
+  const title = document.querySelector('#finalResult .card-title');
+  if(title){
+    title.innerHTML = hasNarration
+      ? '✅ Vídeo com narração pronto! <span class="ct-badge green">concluído</span>'
+      : '✅ Vídeo pronto! <span class="ct-badge green">sem narração</span>';
+  }
+  document.getElementById('finalResult').style.display = 'block';
+  document.getElementById('pipelineBadge').textContent  = 'concluído';
+  document.getElementById('pipelineBadge').className    = 'ct-badge green';
+  document.getElementById('finalDlBtn').onclick = () => {
+    const a = document.createElement('a');
+    a.href     = url;
+    a.download = 'sextou-viral-'+Date.now()+'.mp4';
+    a.click();
+  };
+  document.getElementById('finalResult').scrollIntoView({behavior:'smooth'});
+}
+
+// helpers para o clip card
+function setClipBadge(idx, type, label){
+  const b = document.getElementById('clipbadge-'+idx);
+  if (b){ b.className='clip-badge '+type; b.textContent=label; }
+}
+
+function runVideoJob(k, prompt, dur, idx, totalSteps){
+  return new Promise(async (resolve, reject) => {
+    const stepId = 'step-clip-'+idx;
+    setStepActive(stepId);
+    setClipBadge(idx, 'run', 'gerando');
+    document.getElementById('clipprog-'+idx).style.display   = 'block';
+    document.getElementById('clipresult-'+idx).style.display = 'none';
+    document.getElementById('cliperr-'+idx).style.display    = 'none';
+
+    const payload = {
+      model: selVideoId, prompt,
+      aspect_ratio: document.getElementById('aspect').value,
+      duration: dur,
+      resolution: document.getElementById('resol').value,
+    };
+    if (document.getElementById('vaudio').value === 'true') payload.audio = true;
+
+    const t0 = Date.now();
+    const elTimer = setInterval(() => {
+      const el = document.getElementById('cliptime-'+idx);
+      if (el) el.textContent = Math.floor((Date.now()-t0)/1000)+'s';
+    }, 1000);
+    vidPollTimers.push(elTimer);
+
+    const setMsg = msg => { const el=document.getElementById('clipmsg-'+idx); if(el)el.textContent=msg; };
+    const setFill = pct => { const el=document.getElementById('clipfill-'+idx); if(el)el.style.width=pct+'%'; };
+
+    try {
+      const r = await fetch('https://openrouter.ai/api/v1/videos', {
+        method: 'POST',
+        headers: {'Authorization':'Bearer '+k,'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if (!r.ok){ const e=await r.json().catch(()=>{}); throw new Error(e?.error?.message||'Erro '+r.status); }
+      const job = await r.json();
+      setMsg('Renderizando…'); setFill(20);
+      setStepStatus(stepId, 'Renderizando…');
+
+      const pollUrl = job.polling_url || 'https://openrouter.ai/api/v1/videos/'+job.id;
+      const poll = setInterval(async () => {
+        try {
+          const pr = await fetch(pollUrl, {headers:{Authorization:'Bearer '+k}});
+          const pd = await pr.json();
+          if (pd.status === 'completed'){
+            clearInterval(poll); clearInterval(elTimer);
+            setMsg('Baixando…'); setFill(90);
+            const cr = await fetch('https://openrouter.ai/api/v1/videos/'+job.id+'/content', {headers:{Authorization:'Bearer '+k}});
+            if (!cr.ok) throw new Error('Erro ao baixar clip');
+            const blob = await cr.blob();
+            // armazena o blob desta cena
+            clipBlobs[idx] = blob;
+            // mostra no card individual
+            const vurl = URL.createObjectURL(blob);
+            const vid  = document.getElementById('clipvideo-'+idx);
+            if (vid){ vid.src=vurl; }
+            document.getElementById('clipprog-'+idx).style.display   = 'none';
+            document.getElementById('clipresult-'+idx).style.display = 'block';
+            setClipBadge(idx,'ok','pronto ✓');
+            bindClipButtons(idx);
+            // atualiza download do clip individual
+            const dlBtn = document.getElementById('clipdl-'+idx);
+            if (dlBtn) dlBtn.onclick = () => { const a=document.createElement('a');a.href=vurl;a.download='cena-'+(idx+1)+'.mp4';a.click(); };
+            setStepDone(stepId);
+            // progresso geral
+            const doneSteps = document.querySelectorAll('.pipe-step.done').length;
+            const scenesDone = Object.keys(clipBlobs).length;
+            const scenesTotal = clipPrompts.length;
+            updatePipelineMsg(scenesDone+' de '+scenesTotal+' cenas prontas…', Math.round(scenesDone/scenesTotal*85));
+            resolve(blob);
+          } else if (pd.status === 'failed'){
+            clearInterval(poll); clearInterval(elTimer);
+            const msg = pd.error?.message || 'Falha na geração';
+            document.getElementById('clipprog-'+idx).style.display = 'none';
+            document.getElementById('cliperr-'+idx).style.display  = 'block';
+            document.getElementById('cliperrMsg-'+idx).textContent = msg;
+            setClipBadge(idx,'err','erro');
+            setStepError(stepId, msg);
+            bindClipButtons(idx);
+            reject(new Error('Cena '+(idx+1)+': '+msg));
+          } else {
+            const status = pd.status === 'queued' ? 'Na fila…' : 'Renderizando…';
+            setMsg(status); setStepStatus(stepId, status);
+          }
+        } catch(e){ clearInterval(poll); clearInterval(elTimer);
+          document.getElementById('clipprog-'+idx).style.display = 'none';
+          document.getElementById('cliperr-'+idx).style.display  = 'block';
+          document.getElementById('cliperrMsg-'+idx).textContent = e.message;
+          setClipBadge(idx,'err','erro'); setStepError(stepId, e.message);
+          bindClipButtons(idx); reject(e);
+        }
+      }, 8000);
+      vidPollTimers.push(poll);
+    } catch(e){
+      clearInterval(elTimer);
+      document.getElementById('clipprog-'+idx).style.display = 'none';
+      document.getElementById('cliperr-'+idx).style.display  = 'block';
+      document.getElementById('cliperrMsg-'+idx).textContent = e.message;
+      setClipBadge(idx,'err','erro'); setStepError(stepId, e.message);
+      bindClipButtons(idx); reject(e);
+    }
+  });
+}
+
+// mergeClips substituído por concatVideos + mixAudioVideo
+
+
+function renderPipelineSteps(steps){
+  const cont=document.getElementById('pipelineSteps');
+  cont.innerHTML='';
+  steps.forEach(s=>{
+    const div=document.createElement('div');
+    div.className='pipe-step'; div.id=s.id;
+    div.innerHTML='<div class="ps-icon">'+s.icon+'</div><div class="ps-body"><div class="ps-name">'+s.name+'</div><div class="ps-status" id="'+s.id+'-status">Aguardando...</div></div><div class="ps-time" id="'+s.id+'-time"></div>';
+    cont.appendChild(div);
+  });
+}
+function setStepActive(id){const el=document.getElementById(id);if(!el)return;el.className='pipe-step active';const st=document.getElementById(id+'-status');if(st)st.textContent='Processando...';}
+function setStepDone(id){const el=document.getElementById(id);if(!el)return;el.className='pipe-step done';const ic=el.querySelector('.ps-icon');if(ic)ic.textContent='✅';const st=document.getElementById(id+'-status');if(st)st.textContent='Pronto';}
+function setStepError(id,msg){const el=document.getElementById(id);if(!el)return;el.className='pipe-step error';const ic=el.querySelector('.ps-icon');if(ic)ic.textContent='❌';const st=document.getElementById(id+'-status');if(st)st.textContent=msg||'Erro';}
+function setStepStatus(id,msg){const st=document.getElementById(id+'-status');if(st)st.textContent=msg;}
+function updatePipelineMsg(msg,pct){
+  const m=document.getElementById('pipelineMsg');if(m)m.textContent=msg;
+  if(pct!==null){const f=document.getElementById('pipelineFill');if(f){const cur=parseFloat(f.style.width)||0;if(pct>cur)f.style.width=pct+'%';}}
+}
+
+/* ═══════════════════════════
+   UTILS
+═══════════════════════════ */
+function setPhase(n){
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('p'+i).classList.toggle('on',i===n);
+    const ph=document.getElementById('ph'+i);
+    ph.className='ph'+(i===n?' on':i<n?' done':'');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===4)syncDuration();
+}
+
+function apiKey(){return document.getElementById('apiKey').value.trim();}
+
+function progAnim(id,from,to,dur){
+  const el=document.getElementById(id);if(!el)return;
+  const t0=performance.now(),c=parseFloat(el.style.width)||from;
+  function tick(now){const t=Math.min((now-t0)/dur,1),v=c+(to-c)*(1-Math.pow(1-t,3));el.style.width=v.toFixed(1)+'%';if(t<1)requestAnimationFrame(tick);}
+  requestAnimationFrame(tick);
+}
+
+async function playBuf(buf,fmt,sr){
+  if(fmt==='pcm'){
+    const ctx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:sr||24000});
+    const raw=new Int16Array(buf),f32=new Float32Array(raw.length);
+    for(let i=0;i<raw.length;i++)f32[i]=raw[i]/32768;
+    const ab=ctx.createBuffer(1,f32.length,sr||24000);ab.copyToChannel(f32,0);
+    const src=ctx.createBufferSource();src.buffer=ab;src.connect(ctx.destination);src.start(0);
+    return new Promise(res=>{src.onended=()=>{ctx.close();res();};});
+  }else{
+    const blob=new Blob([buf],{type:'audio/mpeg'}),url=URL.createObjectURL(blob);
+    const a=new Audio(url);a.onended=()=>URL.revokeObjectURL(url);
+    return a.play().catch(e=>{URL.revokeObjectURL(url);throw e;});
+  }
+}
+
+function pcm2wav(buf,sr,ch,bd){
+  const pcm=new Uint8Array(buf),ds=pcm.length,hd=44,wb=new ArrayBuffer(hd+ds),v=new DataView(wb);
+  const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  ws(0,'RIFF');v.setUint32(4,36+ds,true);ws(8,'WAVE');ws(12,'fmt ');
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,ch,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*ch*bd/8,true);
+  v.setUint16(32,ch*bd/8,true);v.setUint16(34,bd,true);
+  ws(36,'data');v.setUint32(40,ds,true);new Uint8Array(wb,44).set(pcm);
+  return new Blob([wb],{type:'audio/wav'});
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function restartAll(){
+  vidPollTimers.forEach(clearInterval);vidPollTimers=[];
+  setPhase(1);
+  ['f-product','f-char1','f-char2','f-char3','f-char4','f-idea'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('f-goal').value='';
+  toggleNarr(true);
+  scriptLines=[];characters=[];audioBlobs={};videoModels=[];
+  document.getElementById('scriptSection').style.display='none';
+  document.getElementById('apiCard').style.display='block';
+  document.getElementById('videoResults').innerHTML='';
+  document.getElementById('audioJobsList').innerHTML='';
+}
+</script>
+</body>
+</html>
