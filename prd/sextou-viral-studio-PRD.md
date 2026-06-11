@@ -25,9 +25,8 @@ O sistema tem três características que determinam a escolha técnica:
 3. **Integrações de terceiros** (OpenRouter, HeyGen, Stripe) — precisa de camada de API segura que proteja as chaves
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                     FRONTEND                            │
-│  Next.js 15 (App Router) + React 19 + TypeScript        │
+
+
 │  Tailwind CSS + shadcn/ui                               │
 │  Zustand (estado global do fluxo de produção)           │
 │  TanStack Query (cache + refetch de jobs)               │

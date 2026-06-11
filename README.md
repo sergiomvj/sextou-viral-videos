@@ -1,100 +1,93 @@
-# 🎬 Sextou Viral Studio
+# sextou-viral-videos
 
-Ferramenta de criação de vídeos virais para sexta-feira — gera roteiros, avatares HeyGen e posts otimizados para redes sociais com IA.
+Sextou Viral Studio em Next.js, com auth, dashboard, studio multi-etapas, billing demo, jobs e persistencia via Prisma/Supabase.
 
----
+## Stack
 
-## 🚀 Stack
+- Next.js 15
+- React 19
+- Tailwind CSS 4
+- NextAuth v5 beta
+- Prisma
+- Supabase Postgres
 
-### v1 (atual) — HTML Standalone
-- Arquivo único `v1-reference.html` com 4 fases de criação:
-  1. **Briefing** — tema, plataforma, formato
-  2. **Roteiro** — gerado via OpenRouter (Claude/GPT)
-  3. **Avatar** — integração HeyGen para vídeo com apresentador IA
-  4. **Post** — legenda + hashtags otimizadas para cada rede
-- Sem backend, sem banco de dados
-- Deploy via nginx (Docker)
+## Escopo atual do MVP
 
-### v2 (roadmap) — Next.js 15 + Supabase
-- App Router + Server Actions
-- Autenticação com Supabase Auth
-- Histórico de projetos no banco
-- Dashboard com analytics
-- Multi-usuário / planos
+- Auth por credentials e Google OAuth condicional por env
+- Dashboard e historico de producoes
+- Studio com fluxo guiado e autosave
+- Geracao mockada de roteiro, audio, video e avatar
+- Gating de plano `FREE` e `PRO` em modo operacional/demo
 
----
+### Stripe no MVP
 
-## 🐳 Deploy no Easypanel
+Stripe nao e obrigatorio para o MVP atual. O codigo de billing foi mantido como scaffolding para a integracao futura, mas o comportamento atual e apenas de gating interno por plano.
 
-### Pré-requisitos
-- VPS com Easypanel instalado
-- Domínio apontado para o servidor (ex: `sextou.fbr.news`)
+- Nao e necessario configurar `STRIPE_SECRET_KEY` nem `STRIPE_WEBHOOK_SECRET` agora
+- A tela `/billing` funciona como controle operacional de plano
+- O upgrade real via checkout e webhook Stripe fica para a fase pos-MVP
 
-### Passos
+## Local setup
 
-1. **No Easypanel**, crie um novo serviço do tipo **App**
-2. Conecte ao repositório GitHub: `sergiomvj/sextou-viral-videos`
-3. Configure:
-   - **Build Type:** Dockerfile
-   - **Port:** 80
-   - **Domain:** `sextou.fbr.news`
-4. Clique em **Deploy**
-
-### Configuração manual (Docker local)
+1. Copie `.env.example` para `.env.local`.
+2. Substitua `[YOUR-PASSWORD]` dentro de `DATABASE_URL` pela senha real do Supabase.
+3. Defina `AUTH_SECRET` e `APP_ENCRYPTION_KEY`.
+4. Defina `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`.
+5. Opcional: defina `AUTH_GOOGLE_ID` e `AUTH_GOOGLE_SECRET` para habilitar Google OAuth.
+6. Instale as dependencias:
 
 ```bash
-# Build da imagem
-docker build -t sextou-viral .
-
-# Rodar localmente
-docker run -p 8080:80 sextou-viral
-
-# Acessar em http://localhost:8080
+npm install
 ```
 
-### Variáveis de ambiente
-Copie `.env.example` para `.env` e preencha as chaves de API:
+## Validacao
 
 ```bash
-cp .env.example .env
+npm run prisma:generate
+npm run lint
+npm run typecheck
+npm run build
+npm test
 ```
 
-> **Nota v1:** As API keys são inseridas diretamente na interface do HTML (não via variáveis de ambiente). O `.env` é preparação para v2.
+## Database bootstrap
 
----
+Gere o Prisma Client:
 
-## 📁 Estrutura do Projeto
-
-```
-sextou-viral-videos/
-├── v1-reference.html      # Aplicação v1 (HTML standalone)
-├── Dockerfile             # Build nginx para deploy
-├── nginx.conf             # Configuração do servidor web
-├── easypanel.json         # Metadados para Easypanel
-├── .env.example           # Template de variáveis de ambiente
-├── .dockerignore          # Arquivos excluídos do build
-└── prd/
-    ├── sextou-viral-studio-PRD.md          # PRD completo
-    └── sextou-viral-studio (6).html        # Versão original v1
+```bash
+npm run prisma:generate
 ```
 
----
+Aplique as migrations commitadas em um banco real:
 
-## 🗺️ Roadmap v1 → v2
+```bash
+npm run prisma:migrate:deploy
+```
 
-| Feature | v1 | v2 |
-|---|---|---|
-| Geração de roteiro IA | ✅ (OpenRouter) | ✅ |
-| Avatar HeyGen | ✅ | ✅ |
-| Post copy | ✅ | ✅ |
-| Autenticação | ❌ | ✅ Supabase |
-| Histórico de projetos | ❌ | ✅ |
-| Multi-usuário | ❌ | ✅ |
-| Analytics | ❌ | ✅ |
-| Deploy | nginx estático | Next.js 15 + Edge |
+Rode o seed do usuario de desenvolvimento:
 
----
+```bash
+npm run db:seed
+```
 
-## 📄 Licença
+Credenciais seed:
 
-Propriedade de **FBR News / Sextou Viral** — uso interno.
+- Email: `dev@sextou.local`
+- Password: `Dev12345!`
+
+## Auth behavior
+
+- Login por credentials fica disponivel quando o banco estiver configurado.
+- Login com Google so aparece quando `AUTH_GOOGLE_ID` e `AUTH_GOOGLE_SECRET` estiverem presentes.
+
+## Integracoes externas
+
+As rotas e contratos para OpenRouter, HeyGen e Stripe podem existir no codigo antes dos secrets reais.
+
+- OpenRouter: pode permanecer mockado ate `OPENROUTER_API_KEY`
+- HeyGen: pode permanecer mockado ate `HEYGEN_API_KEY`
+- Stripe: mantido como scaffold, fora do escopo do MVP atual
+
+## Story handoff
+
+O espelho local das stories desta app fica em `docs/stories/` nesta pasta, apontando para os artefatos canonicos do repo raiz.

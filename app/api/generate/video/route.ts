@@ -1,0 +1,40 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getProduction, updateProduction } from "@/lib/production";
+import { generateMockVideoJobs } from "@/lib/studio-utils";
+import type { BriefData, ScriptData, VideoData, VoicesData } from "@/lib/studio-types";
+import { requireUserId } from "@/lib/request-auth";
+
+export async function POST(request: NextRequest) {
+  try {
+    const userId = await requireUserId();
+    const payload = await request.json();
+    const production = await getProduction(userId, payload.productionId);
+    if (!production) {
+      return NextResponse.json({ error: "not_found" }, { status: 404 });
+    }
+
+    const brief = payload.brief as BriefData;
+    const script = payload.script as ScriptData;
+    const video = payload.video as VideoData;
+    const voices = payload.voices as VoicesData;
+
+    const generated = generateMockVideoJobs(script, brief, video.config, "OPENROUTER");
+
+    await updateProduction(userId, production.id, {
+      phase: 4,
+      status: "DONE",
+      mode: "OPENROUTER",
+      voicesJson: voices as unknown as Record<string, unknown>,
+      scenesJson: generated as unknown as Record<string, unknown>,
+      finalVideoUrl: generated.finalVideoUrl ?? undefined,
+      errorMessage: null,
+    } as never);
+
+    return NextResponse.json({ video: generated });
+  } catch (error) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+    return NextResponse.json({ error: "internal_error" }, { status: 500 });
+  }
+}

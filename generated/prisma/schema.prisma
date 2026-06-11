@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  FREE
+  PRO
+}
+
+enum ProdStatus {
+  DRAFT
+  PROCESSING
+  DONE
+  FAILED
+}
+
+enum ProdMode {
+  OPENROUTER
+  HEYGEN
+}
+
+enum AssetType {
+  LOGO
+  ANIMATION
+}
+
+model User {
+  id             String          @id @default(cuid())
+  name           String?
+  email          String          @unique
+  emailVerified  DateTime?
+  image          String?
+  passwordHash   String?
+  plan           Plan            @default(FREE)
+  planExpiresAt  DateTime?
+  orKeyEnc       String?
+  heygenKeyEnc   String?
+  productions    Production[]
+  assets         Asset[]
+  accounts       Account[]
+  sessions       Session[]
+  authenticators Authenticator[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model Production {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String     @default("Sem titulo")
+  status        ProdStatus @default(DRAFT)
+  mode          ProdMode   @default(OPENROUTER)
+  phase         Int        @default(1)
+  briefJson     Json?
+  scriptJson    Json?
+  voicesJson    Json?
+  scenesJson    Json?
+  clipsJson     Json?
+  audioJson     Json?
+  finalVideoUrl String?
+  thumbnailUrl  String?
+  errorMessage  String?
+  durationSec   Int?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([userId, status])
+  @@index([userId, updatedAt])
+}
+
+model Asset {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  type         AssetType
+  url          String
+  thumbnailUrl String?
+  sizeBytes    Int
+  createdAt    DateTime  @default(now())
+
+  @@index([userId, type])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([sessionToken])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
