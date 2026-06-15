@@ -26,6 +26,8 @@ const sampleVoices = {
   grok: ["Eve", "Ara", "Rex", "Sal", "Leo"],
 };
 
+const MOCK_AUDIO_SAMPLE_RATE = 12000;
+
 export const videoModels = [
   {
     id: "mock/cinematic-fast",
@@ -229,23 +231,120 @@ export function suggestVoiceAssignments(script: ScriptData, voices: VoicesData) 
 export function generateMockAudio(script: ScriptData, voices: VoicesData): AudioData {
   const assignments = voices.assignments.length ? voices.assignments : suggestVoiceAssignments(script, voices);
   const jobs: AudioJob[] = assignments.map((assignment, index) => ({
+    durationSeconds: Math.max(
+      2,
+      Math.ceil(
+        script.lines
+          .filter((line) => line.speaker === assignment.character)
+          .reduce((acc, line) => acc + countWords(line.text), 0) / 3,
+      ),
+    ),
     id: `audio-${index + 1}`,
     character: assignment.character,
     voiceId: assignment.voiceId,
     state: "completed",
-    audioUrl: `mock://audio/${slugify(assignment.character)}.mp3`,
-    durationSeconds: Math.max(
-      2,
-      script.lines
-        .filter((line) => line.speaker === assignment.character)
-        .reduce((acc, line) => acc + countWords(line.text), 0) / 3,
-    ),
+    audioUrl: "",
   }));
+
+  jobs.forEach((job, index) => {
+    job.audioUrl = createMockNarrationDataUrl(job.character, job.durationSeconds, index);
+  });
 
   return {
     jobs,
     generatedAt: new Date().toISOString(),
   };
+}
+
+function createMockNarrationDataUrl(character: string, durationSeconds: number, index: number) {
+  const sampleCount = Math.max(1, Math.floor(MOCK_AUDIO_SAMPLE_RATE * durationSeconds));
+  const pcmBytes = new Uint8Array(sampleCount * 2);
+  const baseFrequency = 180 + (index % 5) * 35 + (character.length % 7) * 8;
+
+  for (let i = 0; i < sampleCount; i++) {
+    const t = i / MOCK_AUDIO_SAMPLE_RATE;
+    const envelope = Math.min(1, i / (MOCK_AUDIO_SAMPLE_RATE * 0.03)) * Math.min(1, (sampleCount - i) / (MOCK_AUDIO_SAMPLE_RATE * 0.08));
+    const voiceLike =
+      Math.sin(2 * Math.PI * baseFrequency * t) * 0.32 +
+      Math.sin(2 * Math.PI * baseFrequency * 2 * t) * 0.08 +
+      Math.sin(2 * Math.PI * (baseFrequency / 2) * t) * 0.05;
+    const sample = Math.max(-1, Math.min(1, voiceLike * envelope));
+    const value = Math.round(sample * 32767);
+    pcmBytes[i * 2] = value & 0xff;
+    pcmBytes[i * 2 + 1] = (value >> 8) & 0xff;
+  }
+
+  const wav = createWavFile(pcmBytes, MOCK_AUDIO_SAMPLE_RATE);
+  return `data:audio/wav;base64,${encodeBase64(wav)}`;
+}
+
+function createWavFile(pcmBytes: Uint8Array, sampleRate: number) {
+  const output = new Uint8Array(44 + pcmBytes.length);
+  const view = new DataView(output.buffer);
+
+  writeAscii(output, 0, "RIFF");
+  view.setUint32(4, 36 + pcmBytes.length, true);
+  writeAscii(output, 8, "WAVE");
+  writeAscii(output, 12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  writeAscii(output, 36, "data");
+  view.setUint32(40, pcmBytes.length, true);
+  output.set(pcmBytes, 44);
+  return output;
+}
+
+function writeAscii(target: Uint8Array, offset: number, value: string) {
+  for (let i = 0; i < value.length; i++) {
+    target[offset + i] = value.charCodeAt(i);
+  }
+}
+
+function encodeBase64(bytes: Uint8Array) {
+  if (typeof Buffer !== "undefined") {
+    return Buffer.from(bytes).toString("base64");
+  }
+
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+  return btoa(binary);
+}
+
+export function buildNarrationOrder(script: ScriptData, audio: AudioData) {
+  const firstSeen = new Map<string, number>();
+  script.lines.forEach((line, index) => {
+    if ((line.type === "speech" || line.type === "narrator") && line.speaker && !firstSeen.has(line.speaker)) {
+      firstSeen.set(line.speaker, index);
+    }
+  });
+
+  return [...audio.jobs].sort((left, right) => {
+    const leftOrder = firstSeen.get(left.character) ?? Number.MAX_SAFE_INTEGER;
+    const rightOrder = firstSeen.get(right.character) ?? Number.MAX_SAFE_INTEGER;
+    return leftOrder - rightOrder;
+  });
+}
+
+export function hasRenderableMediaUrl(value: string | null | undefined) {
+  if (!value) return false;
+  return /^(data:|blob:|https?:)/.test(value);
+}
+
+export function computeExpectedFinalVideoUrl(mode: ProductionMode, jobs: SceneJob[]) {
+  if (mode === "HEYGEN") {
+    return jobs[0]?.videoUrl ?? null;
+  }
+
+  return jobs.length === 1 ? jobs[0].videoUrl : null;
 }
 
 export function buildVideoPrompts(script: ScriptData, brief: BriefData) {
@@ -287,7 +386,7 @@ export function generateMockVideoJobs(
       prompts,
     },
     jobs,
-    finalVideoUrl: mode === "HEYGEN" ? "mock://final/heygen-final.mp4" : "mock://final/openrouter-final.mp4",
+    finalVideoUrl: computeExpectedFinalVideoUrl(mode, jobs),
     finalThumbnailUrl: "mock://final/thumb.jpg",
     updatedAt: new Date().toISOString(),
   };

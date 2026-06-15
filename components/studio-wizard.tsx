@@ -1,8 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
-import type { AudioData, BriefData, ProductionPayload, SceneConfig, ScriptData, VideoData, VoicesData } from "@/lib/studio-types";
-import { heygenAvatars, heygenVoices, suggestVoiceAssignments, videoModels } from "@/lib/studio-utils";
+import { composeStudioVideo } from "@/lib/browser-video-composer";
+import type {
+  AudioData,
+  BriefData,
+  OverlayConfig,
+  ProductionPayload,
+  SceneConfig,
+  ScriptData,
+  VideoData,
+  VoicesData,
+} from "@/lib/studio-types";
+import {
+  buildNarrationOrder,
+  hasRenderableMediaUrl,
+  heygenAvatars,
+  heygenVoices,
+  suggestVoiceAssignments,
+  videoModels,
+} from "@/lib/studio-utils";
 
 const goalOptions = [
   { value: "awareness", label: "Awareness" },
@@ -21,6 +38,20 @@ type WizardState = {
   video: VideoData;
 };
 
+type AssetOption = {
+  id: string;
+  name: string;
+  url: string;
+};
+
+type CompositionState = {
+  pending: boolean;
+  progress: number;
+  label: string;
+  error: string | null;
+  url: string | null;
+};
+
 export function StudioWizard({
   production,
   userPlan,
@@ -37,7 +68,46 @@ export function StudioWizard({
     video: production.video,
   });
   const [statusMessage, setStatusMessage] = useState("Pronto");
+  const [assets, setAssets] = useState<AssetOption[]>([]);
+  const [composition, setComposition] = useState<CompositionState>({
+    pending: false,
+    progress: 0,
+    label: "Montagem final ainda nao executada",
+    error: null,
+    url: null,
+  });
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAssets() {
+      const response = await fetch("/api/assets");
+      if (!response.ok) return;
+      const payload = await response.json();
+      if (cancelled) return;
+      setAssets(
+        (payload.assets ?? []).map((asset: { id: string; name: string; url: string }) => ({
+          id: asset.id,
+          name: asset.name,
+          url: asset.url,
+        })),
+      );
+    }
+
+    void loadAssets();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (composition.url?.startsWith("blob:")) {
+        URL.revokeObjectURL(composition.url);
+      }
+    };
+  }, [composition.url]);
 
   const persistDraft = useCallback(async () => {
     setStatusMessage("Salvando...");
@@ -57,7 +127,12 @@ export function StudioWizard({
     });
 
     if (response.ok) {
-      setStatusMessage(`Salvo as ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`);
+      setStatusMessage(
+        `Salvo as ${new Date().toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`,
+      );
     } else {
       setStatusMessage("Falha ao salvar");
     }
@@ -73,77 +148,156 @@ export function StudioWizard({
   }, [persistDraft, phase]);
 
   const estimatedSeconds = useMemo(() => state.script.estimatedSeconds || 0, [state.script.estimatedSeconds]);
+  const overlayAssetUrl = useMemo(
+    () => assets.find((asset) => asset.id === state.video.config.overlay.assetId)?.url ?? null,
+    [assets, state.video.config.overlay.assetId],
+  );
+  const previewUrl = composition.url ?? state.video.finalVideoUrl;
+  const canPreviewVideo = hasRenderableMediaUrl(previewUrl);
 
   async function generateScript() {
+    setStatusMessage("Gerando roteiro...");
     startTransition(async () => {
-      setStatusMessage("Gerando roteiro...");
-      const response = await fetch("/api/generate/script", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ brief: state.brief, productionId: production.id }),
-      });
-      const payload = await response.json();
-      setState((current) => ({
-        ...current,
-        script: payload.script,
-        brief: payload.brief,
-        voices: {
-          ...current.voices,
-          assignments: suggestVoiceAssignments(payload.script, current.voices),
-        },
-      }));
-      setPhase(2);
-      setStatusMessage("Roteiro gerado");
+      try {
+        const response = await fetch("/api/generate/script", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ brief: state.brief, productionId: production.id }),
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "Erro ao gerar roteiro");
+        setState((current) => ({
+          ...current,
+          script: payload.script,
+          brief: payload.brief,
+          voices: {
+            ...current.voices,
+            assignments: suggestVoiceAssignments(payload.script, current.voices),
+          },
+        }));
+        setPhase(2);
+        setStatusMessage("Roteiro gerado");
+      } catch (error) {
+        setStatusMessage(`Falha: ${getErrorMessage(error)}`);
+      }
     });
   }
 
   async function generateAudio() {
+    setStatusMessage("Gerando vozes...");
     startTransition(async () => {
-      setStatusMessage("Gerando vozes...");
-      const response = await fetch("/api/generate/tts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          productionId: production.id,
-          script: state.script,
-          voices: state.voices,
-        }),
-      });
-      const payload = await response.json();
-      setState((current) => ({
-        ...current,
-        audio: payload.audio,
-        voices: payload.voices,
-      }));
-      setPhase(3);
-      setStatusMessage("Audios prontos");
+      try {
+        const response = await fetch("/api/generate/tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            productionId: production.id,
+            script: state.script,
+            voices: state.voices,
+          }),
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "Erro ao gerar audios");
+        setState((current) => ({
+          ...current,
+          audio: payload.audio,
+          voices: payload.voices,
+        }));
+        setPhase(3);
+        setStatusMessage("Audios prontos");
+      } catch (error) {
+        setStatusMessage(`Falha: ${getErrorMessage(error)}`);
+      }
     });
   }
 
   async function generateVideo() {
+    setStatusMessage("Gerando video...");
     startTransition(async () => {
-      setStatusMessage("Gerando video...");
-      const endpoint = state.video.config.mode === "HEYGEN" ? "/api/heygen/video" : "/api/generate/video";
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          productionId: production.id,
-          brief: state.brief,
-          script: state.script,
-          voices: state.voices,
-          audio: state.audio,
-          video: state.video,
-        }),
-      });
-      const payload = await response.json();
-      setState((current) => ({
-        ...current,
-        video: payload.video,
-      }));
-      setPhase(4);
-      setStatusMessage("Video final pronto");
+      try {
+        const endpoint = state.video.config.mode === "HEYGEN" ? "/api/heygen/video" : "/api/generate/video";
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            productionId: production.id,
+            brief: state.brief,
+            script: state.script,
+            voices: state.voices,
+            audio: state.audio,
+            video: state.video,
+          }),
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "Erro ao gerar videos");
+        setState((current) => ({
+          ...current,
+          video: payload.video,
+        }));
+        setPhase(4);
+        setStatusMessage(payload.video.finalVideoUrl ? "Video final pronto" : "Cenas geradas, montagem pendente");
+        setComposition((current) => ({
+          ...current,
+          error: null,
+          progress: 0,
+          label: payload.video.finalVideoUrl ? "Video final recebido do provider" : "Pronto para montar video final",
+          url: current.url,
+        }));
+      } catch (error) {
+        setStatusMessage(`Falha: ${getErrorMessage(error)}`);
+      }
     });
+  }
+
+  async function composeFinalVideo() {
+    if (!state.video.jobs.length || composition.pending) {
+      return;
+    }
+
+    setComposition((current) => ({
+      ...current,
+      pending: true,
+      progress: 2,
+      label: "Inicializando montagem final",
+      error: null,
+    }));
+    setStatusMessage("Montando video final...");
+
+    try {
+      const result = await composeStudioVideo(
+        {
+          scenes: state.video.jobs,
+          audioJobs: buildNarrationOrder(state.script, state.audio),
+          overlay: state.video.config.overlay,
+          overlayUrl: overlayAssetUrl,
+          config: state.video.config,
+        },
+        (progress) => {
+          setComposition((current) => ({
+            ...current,
+            progress: progress.progress,
+            label: progress.label,
+          }));
+        },
+      );
+
+      setComposition({
+        pending: false,
+        progress: 100,
+        label: "Composicao final concluida",
+        error: null,
+        url: result.url,
+      });
+      setStatusMessage("Video final composto localmente");
+    } catch (error) {
+      setComposition((current) => ({
+        ...current,
+        pending: false,
+        error: getErrorMessage(error),
+        label: "Falha na composicao final",
+      }));
+      setStatusMessage(`Falha: ${getErrorMessage(error)}`);
+    }
   }
 
   async function duplicateProduction() {
@@ -198,6 +352,7 @@ export function StudioWizard({
           <Card title="Fase 2 · Roteiro">
             <ScriptStep
               estimatedSeconds={estimatedSeconds}
+              targetDuration={state.brief.targetDuration}
               script={state.script}
               onApprove={() =>
                 setState((current) => ({
@@ -240,6 +395,7 @@ export function StudioWizard({
 
           <Card title="Fase 4 · Video e distribuicao">
             <VideoStep
+              assets={assets}
               plan={userPlan}
               video={state.video}
               onChange={(video) => setState((current) => ({ ...current, video }))}
@@ -251,19 +407,67 @@ export function StudioWizard({
           <Card title="Resumo do projeto">
             <SummaryPanel phase={phase} state={state} />
           </Card>
+
+          <Card title="Montagem final">
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-[var(--muted)]">
+                {composition.label}
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                <div className="mb-2 flex items-center justify-between text-sm text-[var(--muted)]">
+                  <span>Progresso de composicao</span>
+                  <span>{composition.progress}%</span>
+                </div>
+                <div className="h-3 overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full rounded-full bg-[var(--accent)] transition-all" style={{ width: `${composition.progress}%` }} />
+                </div>
+              </div>
+
+              {composition.error ? (
+                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">{composition.error}</div>
+              ) : null}
+
+              <div className="flex flex-wrap gap-2">
+                <button
+                  className="rounded-2xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                  disabled={!state.video.jobs.length || composition.pending}
+                  onClick={composeFinalVideo}
+                  type="button"
+                >
+                  {composition.pending ? "Compondo..." : "Montar video final"}
+                </button>
+
+                {previewUrl && canPreviewVideo ? (
+                  <a className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm" download href={previewUrl}>
+                    Baixar arquivo atual
+                  </a>
+                ) : null}
+              </div>
+
+              {state.video.config.overlay.enabled ? (
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-[var(--muted)]">
+                  Overlay: {overlayAssetUrl ? "asset carregado para composicao" : "ativo sem asset selecionado"}
+                </div>
+              ) : null}
+            </div>
+          </Card>
+
           <Card title="Video final">
-            {state.video.finalVideoUrl ? (
+            {previewUrl && canPreviewVideo ? (
               <div className="space-y-3">
-                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-[var(--muted)]">
-                  URL mock final: {state.video.finalVideoUrl}
-                </div>
+                <video className="w-full rounded-2xl border border-white/10 bg-black/60" controls src={previewUrl} />
                 <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-300">
-                  Produção pronta para download, duplicação ou retry.
+                  Producao pronta para preview e download.
                 </div>
+              </div>
+            ) : state.video.finalVideoUrl ? (
+              <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-[var(--muted)]">
+                Resultado atual recebido: {state.video.finalVideoUrl}
               </div>
             ) : (
               <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-[var(--muted)]">
-                O video final aparece aqui assim que a fase 4 concluir.
+                Gere cenas e rode a montagem final para produzir um arquivo local de preview.
               </div>
             )}
           </Card>
@@ -335,11 +539,7 @@ function BriefingStep({
       </div>
 
       <Field label="Ideia do video">
-        <textarea
-          className="field min-h-28"
-          value={brief.idea}
-          onChange={(event) => onChange({ ...brief, idea: event.target.value })}
-        />
+        <textarea className="field min-h-28" value={brief.idea} onChange={(event) => onChange({ ...brief, idea: event.target.value })} />
       </Field>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -380,11 +580,7 @@ function BriefingStep({
           </select>
         </Field>
         <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm">
-          <input
-            checked={brief.hasNarrator}
-            onChange={(event) => onChange({ ...brief, hasNarrator: event.target.checked })}
-            type="checkbox"
-          />
+          <input checked={brief.hasNarrator} onChange={(event) => onChange({ ...brief, hasNarrator: event.target.checked })} type="checkbox" />
           Incluir narrador
         </label>
       </div>
@@ -395,29 +591,27 @@ function BriefingStep({
 function ScriptStep({
   script,
   estimatedSeconds,
+  targetDuration,
   onChange,
   onApprove,
 }: {
   script: ScriptData;
   estimatedSeconds: number;
+  targetDuration: number;
   onChange: (script: ScriptData) => void;
   onApprove: () => void;
 }) {
   return (
     <div className="space-y-4">
       <div className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-[var(--muted)]">
-        Duracao estimada: {estimatedSeconds}s · Limite hard: 30s · Legenda sugerida incluida.
+        Duracao estimada: {estimatedSeconds}s · Limite atual: {targetDuration}s · Legenda sugerida incluida.
       </div>
-      <textarea
-        className="field min-h-64"
-        value={script.raw}
-        onChange={(event) => onChange({ ...script, raw: event.target.value })}
-      />
+      <textarea className="field min-h-64" value={script.raw} onChange={(event) => onChange({ ...script, raw: event.target.value })} />
       <div className="flex gap-3">
         <button className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm" onClick={onApprove} type="button">
           Marcar roteiro aprovado
         </button>
-        {estimatedSeconds > 30 ? (
+        {estimatedSeconds > targetDuration ? (
           <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-300">
             Ajuste o roteiro antes de continuar.
           </div>
@@ -457,9 +651,9 @@ function VoicesStep({
       <div className="grid gap-4 md:grid-cols-2">
         <Field label="Idioma">
           <select className="field" value={voices.language} onChange={(event) => onChange({ ...voices, language: event.target.value })}>
-            <option value="pt-BR">Português BR</option>
+            <option value="pt-BR">Portugues BR</option>
             <option value="en-US">English US</option>
-            <option value="es-ES">Español</option>
+            <option value="es-ES">Espanol</option>
           </select>
         </Field>
         <Field label="Provider TTS">
@@ -480,6 +674,7 @@ function VoicesStep({
             voiceId: voices.provider === "gemini" ? "Achernar" : "Eve",
           };
           const voiceOptions = voices.provider === "gemini" ? ["Achernar", "Kore", "Puck", "Sulafat"] : ["Eve", "Ara", "Rex", "Sal"];
+          const audioJob = audio.jobs.find((job) => job.character === character);
           return (
             <div className="grid gap-3 rounded-2xl border border-white/10 bg-black/30 p-4 md:grid-cols-[1fr_1fr_auto]" key={character}>
               <div className="text-sm font-medium">{character}</div>
@@ -498,7 +693,11 @@ function VoicesStep({
                   </option>
                 ))}
               </select>
-              <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-[var(--muted)]">Sample mock</div>
+              {audioJob?.audioUrl ? (
+                <audio className="max-w-40" controls src={audioJob.audioUrl} />
+              ) : (
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-[var(--muted)]">Sample mock</div>
+              )}
             </div>
           );
         })}
@@ -507,7 +706,10 @@ function VoicesStep({
         <div className="space-y-2">
           {audio.jobs.map((job) => (
             <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-3 text-sm text-emerald-300" key={job.id}>
-              {job.character} · {job.voiceId} · {job.audioUrl}
+              <div>
+                {job.character} · {job.voiceId} · {job.durationSeconds}s
+              </div>
+              {job.audioUrl ? <audio className="mt-2 w-full" controls src={job.audioUrl} /> : null}
             </div>
           ))}
         </div>
@@ -519,10 +721,12 @@ function VoicesStep({
 function VideoStep({
   video,
   plan,
+  assets,
   onChange,
 }: {
   video: VideoData;
   plan: "FREE" | "PRO";
+  assets: AssetOption[];
   onChange: (video: VideoData) => void;
 }) {
   const config = video.config;
@@ -611,7 +815,7 @@ function VideoStep({
         <div className="space-y-4 rounded-2xl border border-white/10 bg-black/30 p-4">
           {plan !== "PRO" ? (
             <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
-              Modo Avatar PRO bloqueado no plano Free. Use a página de billing para upgrade.
+              Modo Avatar PRO bloqueado no plano Free. Use a pagina de billing para upgrade.
             </div>
           ) : null}
           <div className="grid gap-4 md:grid-cols-2">
@@ -662,20 +866,12 @@ function VideoStep({
         </div>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-3">
         <Field label="Logo overlay">
           <select
             className="field"
             value={config.overlay.enabled ? "on" : "off"}
-            onChange={(event) =>
-              onChange({
-                ...video,
-                config: {
-                  ...config,
-                  overlay: { ...config.overlay, enabled: event.target.value === "on" },
-                },
-              })
-            }
+            onChange={(event) => onChange({ ...video, config: { ...config, overlay: { ...config.overlay, enabled: event.target.value === "on" } } })}
           >
             <option value="off">Desligado</option>
             <option value="on">Ligado</option>
@@ -685,15 +881,7 @@ function VideoStep({
           <select
             className="field"
             value={config.overlay.position}
-            onChange={(event) =>
-              onChange({
-                ...video,
-                config: {
-                  ...config,
-                  overlay: { ...config.overlay, position: event.target.value },
-                },
-              })
-            }
+            onChange={(event) => onChange({ ...video, config: { ...config, overlay: { ...config.overlay, position: event.target.value } } })}
           >
             <option value="bottom-right">Bottom Right</option>
             <option value="bottom-left">Bottom Left</option>
@@ -702,7 +890,35 @@ function VideoStep({
             <option value="center">Center</option>
           </select>
         </Field>
+        <Field label="Asset do overlay">
+          <select
+            className="field"
+            disabled={!config.overlay.enabled}
+            value={config.overlay.assetId ?? ""}
+            onChange={(event) =>
+              onChange({
+                ...video,
+                config: {
+                  ...config,
+                  overlay: {
+                    ...config.overlay,
+                    assetId: event.target.value || null,
+                  },
+                },
+              })
+            }
+          >
+            <option value="">Sem asset</option>
+            {assets.map((asset) => (
+              <option key={asset.id} value={asset.id}>
+                {asset.name}
+              </option>
+            ))}
+          </select>
+        </Field>
       </div>
+
+      <OverlayControls overlay={config.overlay} onChange={(overlay) => onChange({ ...video, config: { ...config, overlay } })} />
 
       {video.jobs.length ? (
         <div className="space-y-2">
@@ -719,6 +935,47 @@ function VideoStep({
   );
 }
 
+function OverlayControls({
+  overlay,
+  onChange,
+}: {
+  overlay: OverlayConfig;
+  onChange: (overlay: OverlayConfig) => void;
+}) {
+  return (
+    <div className="grid gap-4 md:grid-cols-3">
+      <Field label="Tamanho %">
+        <input
+          className="field"
+          disabled={!overlay.enabled}
+          max={40}
+          min={8}
+          type="number"
+          value={overlay.sizePercent}
+          onChange={(event) => onChange({ ...overlay, sizePercent: Number(event.target.value) })}
+        />
+      </Field>
+      <Field label="Opacidade %">
+        <input
+          className="field"
+          disabled={!overlay.enabled}
+          max={100}
+          min={10}
+          type="number"
+          value={overlay.opacity}
+          onChange={(event) => onChange({ ...overlay, opacity: Number(event.target.value) })}
+        />
+      </Field>
+      <Field label="Inicio do overlay">
+        <select className="field" disabled={!overlay.enabled} value={overlay.startMode} onChange={(event) => onChange({ ...overlay, startMode: event.target.value })}>
+          <option value="from-start">From Start</option>
+          <option value="after-intro">After Intro</option>
+        </select>
+      </Field>
+    </div>
+  );
+}
+
 function SummaryPanel({
   state,
   phase,
@@ -730,8 +987,8 @@ function SummaryPanel({
     <div className="space-y-4 text-sm text-[var(--muted)]">
       <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
         <div className="mb-2 text-white">Briefing</div>
-        <div>Produto: {state.brief.product || "—"}</div>
-        <div>Objetivo: {state.brief.goal || "—"}</div>
+        <div>Produto: {state.brief.product || "-"}</div>
+        <div>Objetivo: {state.brief.goal || "-"}</div>
         <div>Duracao alvo: {state.brief.targetDuration}s</div>
       </div>
       <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
@@ -741,7 +998,7 @@ function SummaryPanel({
         <div>Aprovado: {state.script.approved ? "Sim" : "Nao"}</div>
       </div>
       <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
-        <div className="mb-2 text-white">Produção</div>
+        <div className="mb-2 text-white">Producao</div>
         <div>Fase atual: {phase}</div>
         <div>Audios: {state.audio.jobs.length}</div>
         <div>Cenas/jobs: {state.video.jobs.length}</div>
@@ -762,4 +1019,8 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function canGenerateScript(brief: BriefData) {
   return Boolean(brief.product && brief.goal && brief.idea);
+}
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "Erro desconhecido";
 }
