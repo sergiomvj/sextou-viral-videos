@@ -2,8 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isGoogleAuthConfigured } from "@/lib/auth-flags";
 import { auth, signIn } from "@/lib/auth";
+import { AuthError } from "next-auth";
 
-export default async function LoginPage() {
+export default async function LoginPage(props: { searchParams: Promise<{ error?: string }> }) {
+  const searchParams = await props.searchParams;
   const session = await auth();
   const googleEnabled = isGoogleAuthConfigured();
   if (session?.user) {
@@ -18,14 +20,31 @@ export default async function LoginPage() {
         <p className="mt-3 text-sm text-[var(--muted)]">
           Login por email/senha pronto para desenvolvimento. Google OAuth aparece apenas quando as credenciais estiverem configuradas.
         </p>
+
+        {searchParams?.error && (
+          <div className="mt-4 rounded-xl bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
+            {searchParams.error === "InvalidCredentials" ? "Email ou senha incorretos." : "Ocorreu um erro ao fazer login."}
+          </div>
+        )}
+
         <form
           action={async (formData) => {
             "use server";
-            await signIn("credentials", {
-              email: String(formData.get("email") ?? ""),
-              password: String(formData.get("password") ?? ""),
-              redirectTo: "/dashboard",
-            });
+            try {
+              await signIn("credentials", {
+                email: String(formData.get("email") ?? ""),
+                password: String(formData.get("password") ?? ""),
+                redirectTo: "/dashboard",
+              });
+            } catch (error) {
+              if (error instanceof AuthError) {
+                if (error.type === "CredentialsSignin") {
+                  redirect("/login?error=InvalidCredentials");
+                }
+                redirect("/login?error=Default");
+              }
+              throw error;
+            }
           }}
           className="mt-8 space-y-4"
         >
