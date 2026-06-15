@@ -1,0 +1,50 @@
+{
+  "node": {
+    "0028645ea579e202a41017c1580bef16f471936b2b": {
+      "workers": {
+        "app/login/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CProjetos%5C%5CsextouViralVideos%5C%5Csextou-viral-videos%5C%5Capp%5C%5Clogin%5C%5Cpage.tsx%22%2C%5B%7B%22id%22%3A%220028645ea579e202a41017c1580bef16f471936b2b%22%2C%22exportedName%22%3A%22%24%24RSC_SERVER_ACTION_1%22%2C%22filename%22%3A%22..%2FC%3A%5C%5CProjetos%5C%5CsextouViralVideos%5C%5Csextou-viral-videos%5C%5Capp%5C%5Clogin%5C%5Cpage.tsx%22%7D%2C%7B%22id%22%3A%22401461f862ed93f95ecb51ea9942413338e21ae2de%22%2C%22exportedName%22%3A%22%24%24RSC_SERVER_ACTION_0%22%2C%22filename%22%3A%22..%2FC%3A%5C%5CProjetos%5C%5CsextouViralVideos%5C%5Csextou-viral-videos%5C%5Capp%5C%5Clogin%5C%5Cpage.tsx%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/login/page": "rsc"
+      },
+      "filename": "../C:\\Projetos\\sextouViralVideos\\sextou-viral-videos\\app\\login\\page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_1"
+    },
+    "401461f862ed93f95ecb51ea9942413338e21ae2de": {
+      "workers": {
+        "app/login/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CProjetos%5C%5CsextouViralVideos%5C%5Csextou-viral-videos%5C%5Capp%5C%5Clogin%5C%5Cpage.tsx%22%2C%5B%7B%22id%22%3A%220028645ea579e202a41017c1580bef16f471936b2b%22%2C%22exportedName%22%3A%22%24%24RSC_SERVER_ACTION_1%22%2C%22filename%22%3A%22..%2FC%3A%5C%5CProjetos%5C%5CsextouViralVideos%5C%5Csextou-viral-videos%5C%5Capp%5C%5Clogin%5C%5Cpage.tsx%22%7D%2C%7B%22id%22%3A%22401461f862ed93f95ecb51ea9942413338e21ae2de%22%2C%22exportedName%22%3A%22%24%24RSC_SERVER_ACTION_0%22%2C%22filename%22%3A%22..%2FC%3A%5C%5CProjetos%5C%5CsextouViralVideos%5C%5Csextou-viral-videos%5C%5Capp%5C%5Clogin%5C%5Cpage.tsx%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/login/page": "rsc"
+      },
+      "filename": "../C:\\Projetos\\sextouViralVideos\\sextou-viral-videos\\app\\login\\page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_0"
+    },
+    "00b770a29c0f9c6014e9eeff2d39c6661a821231d4": {
+      "workers": {
+        "app/(protected)/dashboard/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CProjetos%5C%5CsextouViralVideos%5C%5Csextou-viral-videos%5C%5Ccomponents%5C%5Capp-shell.tsx%22%2C%5B%7B%22id%22%3A%2200b770a29c0f9c6014e9eeff2d39c6661a821231d4%22%2C%22exportedName%22%3A%22%24%24RSC_SERVER_ACTION_0%22%2C%22filename%22%3A%22..%2FC%3A%5C%5CProjetos%5C%5CsextouViralVideos%5C%5Csextou-viral-videos%5C%5Ccomponents%5C%5Capp-shell.tsx%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        },
+        "app/(protected)/studio/[id]/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CProjetos%5C%5CsextouViralVideos%5C%5Csextou-viral-videos%5C%5Ccomponents%5C%5Capp-shell.tsx%22%2C%5B%7B%22id%22%3A%2200b770a29c0f9c6014e9eeff2d39c6661a821231d4%22%2C%22exportedName%22%3A%22%24%24RSC_SERVER_ACTION_0%22%2C%22filename%22%3A%22..%2FC%3A%5C%5CProjetos%5C%5CsextouViralVideos%5C%5Csextou-viral-videos%5C%5Ccomponents%5C%5Capp-shell.tsx%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/(protected)/dashboard/page": "rsc",
+        "app/(protected)/studio/[id]/page": "rsc"
+      },
+      "filename": "../C:\\Projetos\\sextouViralVideos\\sextou-viral-videos\\components\\app-shell.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_0"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "AoF2nZqS4HsgfpQ2Xz6L2tLZAk85NGU9JI3Dl9VaZvU="
+}
